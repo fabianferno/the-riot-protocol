@@ -1,4 +1,4 @@
-# rIOT Protocol
+# IoT Device Management
 
 ## Introduction
 
