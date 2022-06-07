@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- saved from url=(0183)https://opensea.mypinata.cloud/ipfs/QmbZdmmorDaHQnh2b37yaq2ehjEEymP4nj3N7rMrhzvrER/?uniqueParam=67253606328417987126545688636400921420120790729348017130909027649305617890063?tokenId=3 -->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!--Red container div-->
+    <div style="position: relative; display: inline-block">
+      <!--Smaller red container div-->
+      <div
+        style="
+          position: absolute;
+          display: flex;
+          width: 100%;
+          align-items: center;
+          padding: 20px;
+        "
+      >
+        <!--Player health-->
+        <div
+          style="
+            position: relative;
+            height: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+          "
+        >
+          <div style="background-color: grey; height: 30px; width: 100%"></div>
+          <div
+            id="playerHealth"
+            style="
+              position: absolute;
+              background: green;
+              top: 0;
+              right: 0;
+              bottom: 0;
+              width: 100%;
+            "
+          ></div>
+        </div>
+        <!--Time-->
+        <div
+          id="timer"
+          style="
+            background-color: red;
+            height: 100px;
+            width: 100px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          10
+        </div>
+        <!--Enemy health-->
+        <div style="position: relative; height: 30px; width: 100%">
+          <div style="background-color: grey; height: 30px"></div>
+          <div
+            id="enemyHealth"
+            style="
+              position: absolute;
+              background-color: green;
+              top: 0;
+              right: 0;
+              left: 0;
+              bottom: 0;
+            "
+          ></div>
+        </div>
+      </div>
+      <div
+        id="resultText"
+        style="
+          position: absolute;
+          color: white;
+          display: none;
+          align-items: center;
+          justify-content: center;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+        "
+      >
+        Tie
+      </div>
+      <canvas></canvas>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
