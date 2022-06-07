@@ -1,10 +1,18 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
 import { motion, AnimatePresence } from "framer-motion";
 
 function Message() {
   const { isAuthenticated, user } = useMoralis(); // eslint-disable-line
-  const dummy = ["1", "2", "3", "4"];
+  const [dummy, setDummy] = useState([
+    "1N23N",
+    "2L2MN",
+    "3WKLM",
+    "4XLKM3",
+    "A223J",
+  ]);
+
+  const [activeDevice, setActiveDevice] = useState(dummy[0]);
 
   const Cards = ({ data, title }) => {
     return (
@@ -23,10 +31,24 @@ function Message() {
             <div className="card-body text-center">
               <h5 className="card-title text-white">{`${title} #${level}`}</h5>
 
-              <div className="btn btn-secondary text-dark text-white fw-bold mx-1">
+              <div
+                onClick={() => setActiveDevice(level)}
+                className="btn btn-secondary text-dark text-white fw-bold mx-1"
+              >
                 Manage
               </div>
-              <div className="btn text-dark text-white fw-bold btn-danger  mx-1">
+              <div
+                onClick={() => {
+                  // Promt user if he really wants to delete
+                  let warning = prompt(
+                    "Are you sure you want to delete this device?",
+                    "Yes",
+                  );
+                  warning === "Yes" &&
+                    setDummy(data.filter((item) => item !== level));
+                }}
+                className="btn text-dark text-white fw-bold btn-danger  mx-1"
+              >
                 Burn
               </div>
             </div>
@@ -51,17 +73,23 @@ function Message() {
           </div>
 
           <div className="mt-4 d-flex justify-content-between">
-            <div className="d-flex h3 col-3 me-3 justify-content-end">
-              ^ Select a device to update on-chain data
+            <div className=" col-3 me-3 justify-content-end">
+              <h3 className="fw-bold text-secondary">
+                ^ Select a device to update on-chain data.
+              </h3>
+              <h6 className="text-white">
+                Currently selected:{" "}
+                <span className="text-warning">#{activeDevice}</span>
+              </h6>
             </div>
-            <form className="d-flex col-3 me-3 justify-content-end">
+
+            <form className="d-flex col-4 justify-content-end">
               <div className="mb-3">
                 <textarea
                   className="form-control"
                   name=""
-                  disabled
                   id=""
-                  rows="4"
+                  rows="3"
                 ></textarea>
               </div>
 
@@ -70,14 +98,13 @@ function Message() {
               </button>
             </form>
 
-            <form className="d-flex col-3  justify-content-end">
+            <form className="d-flex col-4 justify-content-end">
               <div className="mb-3">
                 <textarea
-                  disabled
                   className="form-control"
                   name=""
                   id=""
-                  rows="4"
+                  rows="3"
                 ></textarea>
               </div>
 

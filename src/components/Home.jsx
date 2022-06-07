@@ -30,6 +30,7 @@ function Home() {
           >
             <img
               height={300}
+              style={{ filter: "hue-rotate(246deg)" }}
               src="https://media2.giphy.com/media/fWdPHRnu10flWfsLp7/giphy.gif?cid=790b7611f8451c8302fa9472662d6a4a2ac09df8a5b4e2a1&rid=giphy.gif&ct=s"
               alt=""
             />
