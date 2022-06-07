@@ -10,8 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model devices {
-  id    Int     @id @default(autoincrement())
-  owner  String? @db.VarChar(255)
-  riotHash String? @db.VarChar(255)
+model logs {
+  deviceId    Int
+  sensorName  String   @db.VarChar(255)
+  sensorValue String   @db.VarChar(255)
+  timestamp   DateTime @db.Timestamp
+
+  @@id([deviceId, sensorName, timestamp])
 }

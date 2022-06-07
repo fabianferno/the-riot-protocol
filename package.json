@@ -11,6 +11,9 @@
     "clean": "rm -rf node_modules coverage dist .nyc_output",
     "lint": "tslint -t stylish --project \"tsconfig.json\""
   },
+  "resolution": {
+    "blockstore-core": "1.0.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fabianferno/express-typescript-boilerplate.git"
@@ -23,16 +26,23 @@
   "homepage": "https://github.com/fabianferno/express-typescript-boilerplate#readme",
   "dependencies": {
     "@prisma/client": "3.8.1",
-    "body-parser": "^1.18.3",
+    "blockstore-core": "1.0.2",
+    "body-parser": "1.20.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-fileupload": "1.4.0",
     "express-jwt": "^6.1.0",
     "helmet": "^4.6.0",
     "http-status": "^1.2.0",
+    "ipfs": "0.63.2",
+    "it-all": "^1.0.6",
     "jwks-rsa": "^2.0.5",
+    "keccak256": "1.0.6",
+    "libp2p": "^0.35.8",
     "morgan": "^1.10.0",
-    "nocache": "^3.0.1"
+    "nocache": "^3.0.1",
+    "orbit-db": "0.28.6"
   },
   "devDependencies": {
     "@types/dotenv": "^4.0.3",

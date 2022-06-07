@@ -5,6 +5,10 @@
     "outDir": "dist",
     "sourceMap": true
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/api-v1/devices/test.js",
+    "src/api-v1/devices/test.js"
+  ],
   "exclude": ["node_modules"]
 }

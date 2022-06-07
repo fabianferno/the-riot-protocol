@@ -1,10 +1,11 @@
 import { Router } from "express";
 import Controller from "./devices.controller";
 
-const users: Router = Router();
+const devices: Router = Router();
 const controller = new Controller();
 
 // Retrieve all Users
-users.get("/", controller.getAllDevices);
+devices.get("/", controller.getAllLogs);
+devices.get("/", controller.pushData);
 
-export default users;
+export default devices;
