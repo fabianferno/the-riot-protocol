@@ -1,8 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
+import * as keccak256 from "keccak256";
 
 function MintDevice() {
   const { isAuthenticated, user } = useMoralis();
+  const [riotHash, setRiotHash] = useState("");
+
+  const [deviceId, setDeviceId] = useState("");
+  const [deviceMetadata, setDeviceMetadata] = useState("");
+  const [deviceFirmware, setDeviceFirmware] = useState("");
+
+  const handleMintDevice = async () => {
+    let riotHash = keccak256(
+      keccak256(deviceId) +
+        keccak256(deviceMetadata) +
+        keccak256(deviceFirmware),
+    ).toString("hex");
+    setRiotHash(riotHash);
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -15,6 +30,7 @@ function MintDevice() {
   return (
     <div className="text-white mt-5">
       <h1 className="fw-bold mb-5 text-white">Mint your Device</h1>
+
       <form>
         <div className="mb-3">
           <label htmlFor="exampleInputEmail1" className="form-label">
@@ -34,26 +50,55 @@ function MintDevice() {
           <label htmlFor="exampleInputPassword1" className="form-label">
             Device Identifier
           </label>
-          <input type="text" className="form-control" />
+          <input
+            onChange={(e) => setDeviceId(e.target.value)}
+            value={deviceId}
+            type="text"
+            className="form-control"
+          />
         </div>
 
         <div className="mb-3">
           <label htmlFor="exampleInputPassword1" className="form-label">
-            Metadata
+            Metadata - (Manufacturer Name, Model Name, etc)
           </label>
-          <textarea className="form-control" name="" id="" rows="3"></textarea>
+          <textarea
+            onChange={(e) => setDeviceMetadata(e.target.value)}
+            className="form-control"
+            name=""
+            id=""
+            rows="3"
+          >
+            {deviceMetadata}
+          </textarea>
         </div>
 
         <div className="mb-3">
           <label htmlFor="exampleInputPassword1" className="form-label">
-            Firmware
+            Firmware (Paste the firmware code here)
           </label>
-          <textarea className="form-control" name="" id="" rows="5"></textarea>
+          <textarea
+            onChange={(e) => setDeviceFirmware(e.target.value)}
+            className="form-control"
+            name=""
+            id=""
+            rows="5"
+          >
+            {deviceFirmware}
+          </textarea>
         </div>
 
-        <button type="submit" className="btn btn-danger fw-bold text-end">
+        <div
+          onClick={handleMintDevice}
+          className="btn btn-lg btn-danger text-end"
+        >
           Mint your Device to the Blockchain
-        </button>
+          <p className="text-white h5 fw-normal">
+            <span className="fw-bold">
+              {riotHash && "rIOT_Hash: " + riotHash}
+            </span>
+          </p>
+        </div>
       </form>
     </div>
   );

@@ -121,7 +121,7 @@ const App = ({ isServerInfo }) => {
             href="https://twitter.com/FabianFerno"
             className="fw-bold text-white text-decoration-none"
           >
-            Fabian
+            Team Riot
           </a>
         </p>
       </Footer>
