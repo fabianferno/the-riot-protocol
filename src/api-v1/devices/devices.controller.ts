@@ -5,12 +5,12 @@ import { PrismaClient, Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default class UserController {
-  public getAllUsers = async (req: Request, res: Response): Promise<any> => {
+  public getAllDevices = async (req: Request, res: Response): Promise<any> => {
     try {
-      const users = await prisma.users.findMany();
+      const devices = await prisma.devices.findMany();
       return res.status(200).json({
-        message: "Success",
-        users,
+        message: "success",
+        devices,
       });
     } catch (e) {
       console.error(e);

@@ -10,8 +10,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
+model devices {
   id    Int     @id @default(autoincrement())
-  name  String? @db.VarChar(255)
-  phone String? @db.VarChar(255)
+  owner  String? @db.VarChar(255)
+  riotHash String? @db.VarChar(255)
 }
