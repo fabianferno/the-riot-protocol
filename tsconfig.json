@@ -7,8 +7,8 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/api-v1/devices/test.js",
-    "src/api-v1/devices/test.js"
+    "src/api-v1/devices/validate.js",
+    "src/api-v1/devices/validate.js"
   ],
   "exclude": ["node_modules"]
 }
