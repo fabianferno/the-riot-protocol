@@ -44,7 +44,11 @@ export default class DeviceController {
     );
 
     // Call Contract Method
-    const contractResponse = {} as any;
+    const contractResponse = {
+      riot: "0xknkjb8778t8778587575587tguiguyg67f",
+      contract: "0xhgvkhvykuvyuvuyvo87tglyugul87gu",
+      functionName: "validateOnChain",
+    } as any;
 
     if (riotHash !== contractResponse.riotHash) {
       try {
