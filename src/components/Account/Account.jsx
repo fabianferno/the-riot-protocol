@@ -43,7 +43,7 @@ function Account() {
       <>
         <div onClick={() => setIsAuthModalVisible(true)}>
           <p
-            className="btn fw-bold d-flex align-items-center justify-content-center text-white"
+            className="btn-lg mb-1 fw-bold d-flex align-items-center justify-content-center text-white"
             style={{
               cursor: "pointer",
               backgroundColor: "#4444fc",

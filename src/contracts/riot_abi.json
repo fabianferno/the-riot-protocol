@@ -1,0 +1,91 @@
+[{
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "inputs": [{
+                "internalType": "uint256",
+                "name": "deviceId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "manufacturerHash",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "firmwareHash",
+                "type": "string"
+            }
+        ],
+        "name": "createDevice",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [{
+            "internalType": "uint256",
+            "name": "_entityId",
+            "type": "uint256"
+        }],
+        "name": "deleteDevice",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "entityId",
+        "outputs": [{
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [{
+                "internalType": "uint256",
+                "name": "_entityId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "_firmwareHash",
+                "type": "string"
+            }
+        ],
+        "name": "updateFirmware",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [{
+                "internalType": "uint256",
+                "name": "_entityId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "_manufacturerHash",
+                "type": "string"
+            }
+        ],
+        "name": "updateManufacturerId",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "withdraw",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]

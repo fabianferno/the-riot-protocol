@@ -1,8 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useMoralis } from "react-moralis";
+import { useMoralis, useWeb3Contract } from "react-moralis";
 import * as keccak256 from "keccak256";
 
+// Import ABI Json from file
+const ABI = require("../contracts/riot_abi.json");
+const contractAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+
 function MintDevice() {
+  const { runContractFunction, contractResponse, error, isRunning, isLoading } =
+    useWeb3Contract({
+      abi: ABI,
+      contractAddress: contractAddress,
+      functionName: "observe",
+      params: {
+        secondsAgos: [0, 10],
+      },
+    });
+
+  console.log(contractResponse, error, isRunning, isLoading);
+
   const { isAuthenticated, user } = useMoralis();
   const [riotHash, setRiotHash] = useState("");
 
@@ -16,6 +32,9 @@ function MintDevice() {
         keccak256(deviceMetadata) +
         keccak256(deviceFirmware),
     ).toString("hex");
+
+    runContractFunction();
+
     setRiotHash(riotHash);
   };
 
@@ -29,6 +48,8 @@ function MintDevice() {
 
   return (
     <div className="text-white mt-5">
+      <h1 className="text-white">{!isLoading && contractResponse}</h1>
+
       <h1 className="fw-bold mb-5 text-white">Mint your Device</h1>
 
       <form>
