@@ -7,6 +7,7 @@ import Register from "./Register";
 import Home from ".//Home";
 import Navbar from "./Navbar";
 import Monitor from "./Monitor";
+import ManageDevices from "./ManageDevices";
 
 function App() {
   const {
@@ -35,6 +36,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="register" element={<Register />} />
           <Route path="monitor" element={<Monitor />} />
+          <Route path="manage" element={<ManageDevices />} />
         </Routes>
       </div>
     </main>
