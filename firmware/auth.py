@@ -1,9 +1,10 @@
-import hashlib
-import os
+import hashlib 
 import time 
 import machine
 from binascii import hexlify
 import uos   
+import urequests
+
 
 def hashify(contents):
     return hexlify(hashlib.sha256(contents).digest())
@@ -28,7 +29,11 @@ def getDeviceDataHash():
 
 
 def getSubscriberHash():
-    return hashify("0x64574dDbe98813b23364704e0B00E2e71fC5aD17".encode())
+    subscriber_address = "0x64574dDbe98813b23364704e0B00E2e71fC5aD17"
+    return hashify(subscriber_address.encode())
+
+def getDeviceGroupIdHash():
+    return hashify("dg_1".encode())
 
 def authenticateDevice():
     firmwareHash = getFirmwareHash()
@@ -37,6 +42,12 @@ def authenticateDevice():
     print("Device data hash: ", deviceDataHash)
     subscriberHash = getSubscriberHash()
     print("Subscriber hash: ", subscriberHash)
+    getDeviceGroupIdHash = getDeviceGroupIdHash()
+    print("Device group id hash: ", getDeviceGroupIdHash)
+    
+    # Send these token ingredients and get the riot key from the main server
+    
+    
     
 def blinkLed():    
     led = machine.Pin(16, machine.Pin.OUT)
