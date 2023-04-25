@@ -3,6 +3,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const app = express();
 const axios = require("axios");
+const sqlite3 = require("sqlite3").verbose();
 
 const Web3 = require("web3");
 const HDWalletProvider = require("@truffle/hdwallet-provider");
@@ -13,6 +14,13 @@ const {
   privateKey,
   providerUrl,
 } = require("./constants");
+
+const db = new sqlite3.Database("./riot.db", (err) => {
+  if (err) {
+    console.error(err.message);
+  }
+  console.log("Connected to the riot database.");
+});
 
 const provider = new HDWalletProvider([privateKey], providerUrl);
 const web3 = new Web3(provider);
@@ -64,6 +72,27 @@ app.get("/store", async (req, res) => {
   }
 });
 
+app.post("/sensor-values", async (req, res) => {
+  try {
+    const { sensorValue, deviceId } = req.body;
+
+    db.run(
+      "INSERT INTO sensor_data (deviceId, sensorValue) VALUES (?, ?)",
+      [deviceId, sensorValue],
+      function (err) {
+        if (err) {
+          console.error(err.message);
+          res.status(500).send("Internal server error");
+        }
+        res.json({ status: "success" });
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get("/retrieve", async (req, res) => {
   try {
     await contract.methods
@@ -93,7 +122,7 @@ app.get("/test", async (req, res) => {
     } = req.query;
 
     // Generate a random bytes32 hash
-    const key = web3.utils.randomHex(32);
+    const key = web3.utils.randomHex(16);
 
     res.status(200).json({ key });
   } catch (error) {

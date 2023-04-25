@@ -57,9 +57,8 @@ const TransactionsPage = () => {
               name=""
               id=""
               rows="5"
-            >
-              {deviceFirmware}
-            </textarea>
+              value={deviceFirmware}
+            ></textarea>
           </div>
 
           <div className="btn btn-lg btn-danger text-end">Mint your Device to the Blockchain</div>

@@ -62,9 +62,7 @@ def authenticateDevice():
     # Send the GET request and print the response content
     response = urequests.get(url)
     data = response.json()
-    key = data.get("key")
-    
-    print("Riot key: ", key)
+    key = data.get("key") 
     
     return key
     

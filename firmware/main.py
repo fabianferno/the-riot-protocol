@@ -5,22 +5,26 @@ import time
 import cryptolib
 import os
 import machine
+import binascii
 
 
 led = machine.Pin(16, machine.Pin.OUT)
 
 
-riotKey = authenticateDevice().encode()
-# Initialization Vector
-key =  os.urandom(16) 
-iv = os.urandom(16)
+riot_key_hex  = authenticateDevice() 
+riot_key_bytes = binascii.unhexlify(riot_key_hex[2:])
+riotKey = binascii.hexlify(riot_key_bytes) 
+ 
+print("Recieved Riot Key: ",riotKey)
  
 # Create a AES object
-cipher = cryptolib.aes(key,2,iv)
+cipher = cryptolib.aes(riotKey,1)
+
+ldr = machine.ADC(0)
 
  
 while(True): 
-    sensorData = random.getrandbits(7) % 100
+    sensorData = ldr.read()
     
     # Convert the sensor value to bytes
     sensor_value_bytes = bytes(str(sensorData), 'utf-8')
