@@ -1,30 +1,265 @@
-const contractAddress = "0x97079d7d0785477292B05E4471b8f4f5E29A956d";
+const contractAddress = "0xD7d682C1c983B3D0747aB4DA588AfBB2f629bC0e";
 
 const contractABI = [
   {
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
     inputs: [
       {
-        internalType: "uint256",
-        name: "num",
-        type: "uint256",
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
       },
     ],
-    name: "store",
+    name: "checkIfDeviceIsMinted",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [],
-    name: "retrieve",
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "deviceIdToDevice",
     outputs: [
+      {
+        internalType: "bytes32",
+        name: "firmwareHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "deviceDataHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "deviceGroupIdHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "deviceId",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "subscriber",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "sessionSalt",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
       {
         internalType: "uint256",
         name: "",
         type: "uint256",
       },
     ],
+    name: "devices",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_firmwareHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "_deviceDataHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "_deviceGroupIdHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
+      },
+    ],
+    name: "generateRiotKeyForDevice",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_subscriber",
+        type: "address",
+      },
+    ],
+    name: "generateRiotKeyForSubscriber",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_firmwareHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "_deviceDataHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "_deviceGroupIdHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
+      },
+    ],
+    name: "mintDevice",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "bytes32",
+            name: "firmwareHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceDataHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceGroupIdHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "address",
+            name: "deviceId",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "subscriber",
+            type: "address",
+          },
+          {
+            internalType: "bytes32",
+            name: "sessionSalt",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct Riot.Device",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_subscriber",
+        type: "address",
+      },
+    ],
+    name: "setSubscriberAddress",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "bytes32",
+            name: "firmwareHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceDataHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceGroupIdHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "address",
+            name: "deviceId",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "subscriber",
+            type: "address",
+          },
+          {
+            internalType: "bytes32",
+            name: "sessionSalt",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct Riot.Device",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];

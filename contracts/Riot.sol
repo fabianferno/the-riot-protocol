@@ -51,16 +51,22 @@ contract Riot {
         }
         require(found, "Address not found in array");
     }
+    
 
-    function merkleRoot(bytes32[6] memory hashes) public pure returns (bytes32) {
+   function merkleRoot(bytes32[] memory hashes) private pure returns (bytes32) {
         uint len = hashes.length;
         require(len > 0, "Merkle root cannot be computed with an empty array");
         if (len == 1) {
             return hashes[0];
         } else {
             if (len % 2 == 1) {
-                hashes.push(hashes[len - 1]);
+                bytes32[] memory extendedHashes = new bytes32[](len + 1);
+                for (uint i = 0; i < len; i++) {
+                    extendedHashes[i] = hashes[i];
+                }
+                extendedHashes[len] = hashes[len - 1];
                 len++;
+                hashes = extendedHashes;
             }
             bytes32[] memory newHashes = new bytes32[](len / 2);
             for (uint i = 0; i < len / 2; i++) {
@@ -70,7 +76,7 @@ contract Riot {
         }
     }
 
-    function generateRiotKeyForDevice (bytes32 _firmwareHash, bytes32 _deviceDataHash, bytes32 _deviceGroupIdHash, address _deviceId) public returns (bytes32) {
+    function generateRiotKeyForDevice (bytes32 _firmwareHash, bytes32 _deviceDataHash, bytes32 _deviceGroupIdHash, address _deviceId) public view returns (bytes32) {
         // Check if the recieved data is in the valid devices
         checkIfDeviceIsMinted(_deviceId);
         require(deviceIdToDevice[_deviceId].firmwareHash == _firmwareHash, "Invalid FirmwareHash");
@@ -87,7 +93,7 @@ contract Riot {
         return merkleRoot(hashes); 
     }
 
-    function generateRiotKeyForSubscriber (address _deviceId, address _subscriber) public returns (bytes32) {
+    function generateRiotKeyForSubscriber (address _deviceId, address _subscriber) public view returns (bytes32) {
         // Check if the recieved data is in the valid devices
         checkIfDeviceIsMinted(_deviceId);
         require(deviceIdToDevice[_deviceId].subscriber == _subscriber, "Unauthorized User");
