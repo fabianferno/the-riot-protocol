@@ -42,11 +42,31 @@ def authenticateDevice():
     print("Device data hash: ", deviceDataHash)
     subscriberHash = getSubscriberHash()
     print("Subscriber hash: ", subscriberHash)
-    getDeviceGroupIdHash = getDeviceGroupIdHash()
-    print("Device group id hash: ", getDeviceGroupIdHash)
+    deviceGroupIdHash = getDeviceGroupIdHash()
+    print("Device group id hash: ", deviceGroupIdHash)
     
     # Send these token ingredients and get the riot key from the main server
+    # Define the base URL and query parameters
+    base_url = "http://192.168.1.13:5000/test"
+    params = {
+        "firmwareHash": firmwareHash,
+        "deviceDataHash" : deviceDataHash,
+        "subscriberHash" : subscriberHash,
+        "deviceGroupIdHash": deviceGroupIdHash, 
+    }
+
+    # Encode the query parameters and append them to the URL
+    encoded_params = "&".join(["{}={}".format(k,v) for k, v in params.items()])
+    url = "{}?{}".format(base_url, encoded_params)
+
+    # Send the GET request and print the response content
+    response = urequests.get(url)
+    data = response.json()
+    key = data.get("key")
     
+    print("Riot key: ", key)
+    
+    return key
     
     
 def blinkLed():    
