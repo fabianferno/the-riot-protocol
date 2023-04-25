@@ -5,7 +5,7 @@ const Home = () => {
   return (
     <VStack w={'full'}>
       <Heading size="md" marginBottom={6}>
-        Ethereum Boilerplate
+        RIOT - Decentrlaized Security Gateway Platform
       </Heading>
       <List spacing={3}>
         <ListItem>

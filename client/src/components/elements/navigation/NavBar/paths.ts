@@ -7,6 +7,10 @@ const NAV_LINKS: ISubNav[] = [
     href: '/transactions',
   },
   {
+    label: 'Mint Device',
+    href: '/mint-device',
+  },
+  {
     label: 'Transfers',
     href: '/transfers',
     children: [

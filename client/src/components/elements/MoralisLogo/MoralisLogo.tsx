@@ -5,12 +5,11 @@ const MoralisLogo = () => {
   const { colorMode } = useColorMode();
 
   return (
-    <Image
-      src={colorMode === 'dark' ? '/Moralis-DarkBG.svg' : '/Moralis-LightBG.svg'}
-      height={45}
-      width={150}
-      alt="Moralis"
-    />
+    <h1 style={{
+      fontSize: "35px",
+      fontWeight: "bold",
+      fontFamily: "monospace",
+    }}>RIOT PROTOCOL</h1>
   );
 };
 
