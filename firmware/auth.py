@@ -1,5 +1,4 @@
-import hashlib 
-import time 
+import hashlib  
 import machine
 from binascii import hexlify
 import uos   
@@ -66,10 +65,4 @@ def authenticateDevice():
     
     return key
     
-    
-def blinkLed():    
-    led = machine.Pin(16, machine.Pin.OUT)
-    while(True):  
-        led.value(1) 
-        time.sleep(1) 
-        led.value(0)
+     

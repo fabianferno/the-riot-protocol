@@ -5,27 +5,12 @@ const app = express();
 const axios = require("axios");
 const sqlite3 = require("sqlite3").verbose();
 
-const Web3 = require("web3");
-const HDWalletProvider = require("@truffle/hdwallet-provider");
-
-const {
-  contractABI,
-  contractAddress,
-  privateKey,
-  providerUrl,
-} = require("./constants");
-
-const db = new sqlite3.Database("./riot.db", (err) => {
+const db = new sqlite3.Database("./database.db", (err) => {
   if (err) {
     console.error(err.message);
   }
   console.log("Connected to the riot database.");
 });
-
-const provider = new HDWalletProvider([privateKey], providerUrl);
-const web3 = new Web3(provider);
-
-const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 // Middlewares
 app.use(cors());
@@ -35,19 +20,22 @@ app.use(express.json());
 const dotenv = require("dotenv");
 dotenv.config();
 
-// Example function call to store the number '42'
-const storeNumber = async (number) => {
-  const accounts = await web3.eth.getAccounts();
-  const gasPrice = await web3.eth.getGasPrice();
-  const gasLimit = 300000;
-  const tx = contract.methods
-    .store(number)
-    .send({ from: accounts[0], gasPrice, gasLimit });
-  return tx;
-};
-
 app.get("/store", async (req, res) => {
   try {
+    const Web3 = require("web3");
+    const HDWalletProvider = require("@truffle/hdwallet-provider");
+
+    const {
+      contractABI,
+      contractAddress,
+      privateKey,
+      providerUrl,
+    } = require("./constants");
+    const provider = new HDWalletProvider([privateKey], providerUrl);
+    const web3 = new Web3(provider);
+
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+
     const {
       firmwareHash,
       deviceDataHash,
@@ -55,6 +43,17 @@ app.get("/store", async (req, res) => {
       deviceGroupIdHash,
       testNo,
     } = req.query;
+
+    // Example function call to store the number '42'
+    const storeNumber = async (number) => {
+      const accounts = await web3.eth.getAccounts();
+      const gasPrice = await web3.eth.getGasPrice();
+      const gasLimit = 300000;
+      const tx = contract.methods
+        .store(number)
+        .send({ from: accounts[0], gasPrice, gasLimit });
+      return tx;
+    };
 
     // Call the function to store the number '42'
     storeNumber(testNo)
@@ -72,28 +71,7 @@ app.get("/store", async (req, res) => {
   }
 });
 
-app.post("/sensor-values", async (req, res) => {
-  try {
-    const { sensorValue, deviceId } = req.body;
-
-    db.run(
-      "INSERT INTO sensor_data (deviceId, sensorValue) VALUES (?, ?)",
-      [deviceId, sensorValue],
-      function (err) {
-        if (err) {
-          console.error(err.message);
-          res.status(500).send("Internal server error");
-        }
-        res.json({ status: "success" });
-      }
-    );
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get("/retrieve", async (req, res) => {
+app.get("/riot-token", async (req, res) => {
   try {
     await contract.methods
       .retrieve()
@@ -111,20 +89,66 @@ app.get("/retrieve", async (req, res) => {
   }
 });
 
-app.get("/test", async (req, res) => {
+app.get("/test-random-key", async (req, res) => {
   try {
-    const {
-      firmwareHash,
-      deviceDataHash,
-      subscriberHash,
-      deviceGroupIdHash,
-      deviceId,
-    } = req.query;
-
     // Generate a random bytes32 hash
     const key = web3.utils.randomHex(16);
 
     res.status(200).json({ key });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DB
+// CREATE TABLE sensor_data (
+//   id INTEGER PRIMARY KEY AUTOINCREMENT,
+//   deviceId TEXT,
+//   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//   sensorValue TEXT
+// );
+app.post("/db", async (req, res) => {
+  try {
+    const { sensorValue, deviceId } = req.body;
+
+    db.run(
+      "INSERT INTO sensor_data (deviceId, sensorValue) VALUES (?, ?)",
+      [deviceId, sensorValue],
+      function (err) {
+        if (err) {
+          console.error(err.message);
+          res.status(500).send("Internal server error");
+        }
+        // Return the record as response
+        db.get(
+          `SELECT * FROM sensor_data WHERE id = ${this.lastID}`,
+          (err, row) => {
+            if (err) {
+              console.error(err.message);
+              res.status(500).send("Internal server error");
+            }
+            res.status(200).json(row);
+          }
+        );
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/db", async (req, res) => {
+  try {
+    // Return the record as response
+    db.all(`SELECT * FROM sensor_data`, (err, result) => {
+      if (err) {
+        console.error(err.message);
+        res.status(500).send("Internal server error");
+      }
+      res.status(200).json(result);
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });

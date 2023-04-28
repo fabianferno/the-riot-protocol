@@ -1,16 +1,20 @@
-import { useColorMode } from '@chakra-ui/react';
-import Image from 'next/image';
+import { Box } from '@chakra-ui/react'
 
-const MoralisLogo = () => {
-  const { colorMode } = useColorMode();
 
+const Logo = () => {
   return (
-    <h1 style={{
-      fontSize: "35px",
-      fontWeight: "bold",
-      fontFamily: "monospace",
-    }}>RIOT PROTOCOL</h1>
+    <Box rounded={"2xl"} bg='#ffffff' w="-moz-fit-content" m={5} px={3} py={1} color='white' >
+      <h1 style={{
+        fontSize: "25px",
+        fontWeight: "bold",
+        fontFamily: "monospace",
+        color: "black",
+        textAlign: "center",
+      }}>
+        the-riot-protocol
+      </h1>
+    </Box >
   );
 };
 
-export default MoralisLogo;
+export default Logo;

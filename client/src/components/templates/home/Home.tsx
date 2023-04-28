@@ -1,62 +1,23 @@
-import { CheckCircleIcon, SettingsIcon } from '@chakra-ui/icons';
-import { Heading, VStack, List, ListIcon, ListItem } from '@chakra-ui/react';
+
+import { Heading, VStack, Text, Button } from '@chakra-ui/react';
+import Link from "next/link"
 
 const Home = () => {
   return (
     <VStack w={'full'}>
-      <Heading size="md" marginBottom={6}>
-        RIOT - Decentrlaized Security Gateway Platform
+      <Heading size="lg" marginBottom={6}>
+        RIOT - Decentralized Security Gateway Platform
       </Heading>
-      <List spacing={3}>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          Moralis authentication
-        </ListItem>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          Display Transactions
-        </ListItem>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          Display ERC20 transfers
-        </ListItem>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          Display ERC20 balances
-        </ListItem>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          Display NFT balances
-        </ListItem>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          Display NFT transfers
-        </ListItem>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          Multichain Support
-        </ListItem>
-        <ListItem>
-          <ListIcon as={CheckCircleIcon} color="green.500" />
-          Using Moralis from client-side
-        </ListItem>
-        <ListItem>
-          <ListIcon as={SettingsIcon} color="green.500" />
-          Adding explorer links to balances, transactions ...
-        </ListItem>
-        <ListItem>
-          <ListIcon as={SettingsIcon} color="green.500" />
-          Better responsive design
-        </ListItem>
-        <ListItem>
-          <ListIcon as={SettingsIcon} color="green.500" />
-          Rainbowkit integration
-        </ListItem>
-        <ListItem>
-          <ListIcon as={SettingsIcon} color="green.500" />
-          ... and more
-        </ListItem>
-      </List>
+
+      <Text size={"2xl"} textAlign={"center"}>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Autem dignissimos vero distinctio mollitia, laudantium aperiam rerum recusandae unde magni, doloremque modi dolorum quod, illo a eligendi incidunt rem? Deleniti, aspernatur?
+      </Text>
+
+      <Link href="/mint-device">
+        <Button size={"lg"} style={{ marginTop: "30px" }}>Mint your device</Button>
+      </Link>
+
+
     </VStack>
   );
 };
