@@ -2,7 +2,7 @@
 // Tells the Solidity compiler to compile only from v0.8.13 to v0.9.0
 pragma solidity ^0.8.13;
 
-contract RiotV2 {
+contract TheRiotProtocol {
     address[] public devices;
 
     struct Device {
@@ -14,6 +14,7 @@ contract RiotV2 {
         address subscriber;
         bytes32 sessionSalt;
     }
+
 
     mapping(address => Device) public deviceIdToDevice;
 
@@ -41,10 +42,10 @@ contract RiotV2 {
         return newDevice;
     }
 
-    function setSubscriberAddress(
-        address _deviceId,
-        address _subscriber
-    ) public returns (Device memory) {
+    function setSubscriberAddress(address _deviceId, address _subscriber)
+        public
+        returns (Device memory)
+    {
         // Update the mappings
         deviceIdToDevice[_deviceId].subscriber = _subscriber;
 
@@ -57,72 +58,44 @@ contract RiotV2 {
         return deviceIdToDevice[_deviceId];
     }
 
-    function checkIfDeviceIsMinted(
-        address _deviceId
-    ) public view returns (bool) {
-        return deviceIdToDevice[_deviceId].deviceId == _deviceId;
+    modifier checkIfDeviceIsMinted(address _deviceId) 
+    {
+        require(deviceIdToDevice[_deviceId].deviceId == _deviceId, "Device not minted.");
+        _;
     }
 
-    function computeMerkleRoot(
-        bytes32[] memory hashes
-    ) public pure returns (bytes32) {
-        require(hashes.length > 0, "Empty array of hashes");
+    function getMerkleRoot(bytes32[] memory hashes) public pure returns (bytes32) {
+        require(hashes.length == 6, "Input array must have 6 elements");
 
-        uint256 numLeaves = hashes.length;
-        uint256 treeDepth = ceilLog2(numLeaves);
-        uint256 numNodes = 2 ** treeDepth - 1;
+        bytes32 rootHash = keccak256(abi.encodePacked(
+            keccak256(abi.encodePacked(hashes[0], hashes[1])),
+            keccak256(abi.encodePacked(hashes[2], hashes[3])),
+            keccak256(abi.encodePacked(hashes[4], hashes[5]))
+        ));
 
-        bytes32[] memory nodes = new bytes32[](numNodes);
-
-        // Store the leaf nodes in the tree
-        for (uint256 i = 0; i < numLeaves; i++) {
-            nodes[numNodes - numLeaves + i + 1] = hashes[i];
-        }
-
-        // Compute the intermediate nodes in the tree
-        for (uint256 i = numNodes - numLeaves; i > 0; i--) {
-            nodes[i] = sha256(abi.encodePacked(nodes[2 * i], nodes[2 * i + 1]));
-        }
-
-        // The root node is the top-level node in the tree
-        return nodes[1];
+        return rootHash;
     }
 
-    function ceilLog2(uint256 x) private pure returns (uint256) {
-        uint256 result = 0;
-        uint256 y = x;
-
-        while (y > 0) {
-            result++;
-            y = y >> 1;
-        }
-
-        if (x == (2 ** (result - 1))) {
-            return result - 1;
-        } else {
-            return result;
-        }
-    }
+    event Testing(string hehe);
 
     function generateRiotKeyForDevice(
         bytes32 _firmwareHash,
         bytes32 _deviceDataHash,
         bytes32 _deviceGroupIdHash,
         address _deviceId
-    ) public view returns (bytes32) {
-        // Check if the recieved data is in the valid devices
-        checkIfDeviceIsMinted(_deviceId);
+    ) public view checkIfDeviceIsMinted(_deviceId) returns (bytes32) {
+        // Check if the recieved data is in the valid devices 
         require(
             deviceIdToDevice[_deviceId].firmwareHash == _firmwareHash,
             "Invalid FirmwareHash"
         );
         require(
             deviceIdToDevice[_deviceId].deviceDataHash == _deviceDataHash,
-            "Invalid FirmwareHash"
+            "Invalid DeviceDataHash"
         );
         require(
             deviceIdToDevice[_deviceId].deviceGroupIdHash == _deviceGroupIdHash,
-            "Invalid FirmwareHash"
+            "Invalid DeviceGroupIdHash"
         );
 
         bytes32[] memory hashes = new bytes32[](6);
@@ -132,17 +105,16 @@ contract RiotV2 {
         hashes[3] = bytes32(bytes20(_deviceId));
         hashes[4] = bytes32(bytes20(deviceIdToDevice[_deviceId].subscriber));
         hashes[5] = deviceIdToDevice[_deviceId].sessionSalt;
-        return computeMerkleRoot(hashes);
+ 
+        return getMerkleRoot(hashes); 
     }
 
     function generateRiotKeyForSubscriber(
-        address _deviceId,
-        address _subscriber
-    ) public view returns (bytes32) {
-        // Check if the recieved data is in the valid devices
-        checkIfDeviceIsMinted(_deviceId);
+        address _deviceId 
+    ) public view checkIfDeviceIsMinted(_deviceId) returns (bytes32) {
+        // Check if the recieved data is in the valid devices 
         require(
-            deviceIdToDevice[_deviceId].subscriber == _subscriber,
+            deviceIdToDevice[_deviceId].subscriber == msg.sender,
             "Unauthorized User"
         );
 
@@ -151,8 +123,8 @@ contract RiotV2 {
         hashes[1] = deviceIdToDevice[_deviceId].deviceDataHash;
         hashes[2] = deviceIdToDevice[_deviceId].deviceGroupIdHash;
         hashes[3] = bytes32(bytes20(_deviceId));
-        hashes[4] = bytes32(bytes20(_subscriber));
+        hashes[4] = bytes32(bytes20(msg.sender));
         hashes[5] = deviceIdToDevice[_deviceId].sessionSalt;
-        return computeMerkleRoot(hashes);
+        return getMerkleRoot(hashes);
     }
 }
