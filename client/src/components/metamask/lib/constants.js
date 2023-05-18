@@ -1,584 +1,108 @@
-const contractAddress = '0x199F2f9ED987890CC46AaA956B1204a05B907bf6';
+const contractAddress = '0x3BB59Fa798A14A56E6fcDCBb8373d27F5Ec2dbF9';
 const ABI = [
+  { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
   {
-    inputs: [],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'approved',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'Approval',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'bool',
-        name: 'approved',
-        type: 'bool',
-      },
-    ],
-    name: 'ApprovalForAll',
-    type: 'event',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'approve',
+    inputs: [{ internalType: 'address', name: '_deviceId', type: 'address' }],
+    name: 'burnDevice',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'changeMultiple',
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'deviceIdToDevice',
     outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'previousOwner',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
-    name: 'OwnershipTransferred',
-    type: 'event',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'purchaseNFT',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'renounceOwnership',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'string',
-        name: 'uri',
-        type: 'string',
-      },
-    ],
-    name: 'safeMint',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'safeTransferFrom',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes',
-        name: 'data',
-        type: 'bytes',
-      },
-    ],
-    name: 'safeTransferFrom',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
-      },
-      {
-        internalType: 'bool',
-        name: 'approved',
-        type: 'bool',
-      },
-    ],
-    name: 'setApprovalForAll',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'Transfer',
-    type: 'event',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'transferFrom',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
-    name: 'transferOwnership',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'price',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'bytes',
-        name: 'encrytped',
-        type: 'bytes',
-      },
-    ],
-    name: 'WooHoo',
-    type: 'event',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-    ],
-    name: 'balanceOf',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
+      { internalType: 'bytes32', name: 'firmwareHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: 'deviceDataHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: 'deviceGroupIdHash', type: 'bytes32' },
+      { internalType: 'address', name: 'deviceId', type: 'address' },
+      { internalType: 'address', name: 'subscriber', type: 'address' },
+      { internalType: 'bytes32', name: 'sessionSalt', type: 'bytes32' },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'devices',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
-      {
-        internalType: 'bytes32',
-        name: '_data',
-        type: 'bytes32',
-      },
+      { internalType: 'bytes32', name: '_firmwareHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceDataHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceGroupIdHash', type: 'bytes32' },
+      { internalType: 'address', name: '_deviceId', type: 'address' },
     ],
-    name: 'convertToBytes',
-    outputs: [
-      {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes',
-      },
-    ],
+    name: 'generateRiotKeyForDevice',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '_deviceId', type: 'address' }],
+    name: 'generateRiotKeyForSubscriber',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'bytes32[]', name: 'hashes', type: 'bytes32[]' }],
+    name: 'getMerkleRoot',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
     stateMutability: 'pure',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
+      { internalType: 'bytes32', name: '_firmwareHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceDataHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceGroupIdHash', type: 'bytes32' },
+      { internalType: 'address', name: '_deviceId', type: 'address' },
     ],
-    name: 'getAnalytics',
+    name: 'mintDevice',
     outputs: [
       {
         components: [
-          {
-            internalType: 'string',
-            name: 'name',
-            type: 'string',
-          },
-          {
-            internalType: 'string',
-            name: 'symbol',
-            type: 'string',
-          },
-          {
-            internalType: 'uint256',
-            name: 'price',
-            type: 'uint256',
-          },
-          {
-            internalType: 'bool',
-            name: 'forSale',
-            type: 'bool',
-          },
-          {
-            internalType: 'enum MyToken.Rating',
-            name: 'rating',
-            type: 'uint8',
-          },
-          {
-            internalType: 'bytes',
-            name: 'encrytped',
-            type: 'bytes',
-          },
+          { internalType: 'bytes32', name: 'firmwareHash', type: 'bytes32' },
+          { internalType: 'bytes32', name: 'deviceDataHash', type: 'bytes32' },
+          { internalType: 'bytes32', name: 'deviceGroupIdHash', type: 'bytes32' },
+          { internalType: 'address', name: 'deviceId', type: 'address' },
+          { internalType: 'address', name: 'subscriber', type: 'address' },
+          { internalType: 'bytes32', name: 'sessionSalt', type: 'bytes32' },
         ],
-        internalType: 'struct MyToken.NFTAnalysis',
-        name: 'analysis',
+        internalType: 'struct TheRiotProtocol.Device',
+        name: '',
         type: 'tuple',
       },
     ],
-    stateMutability: 'view',
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
+      { internalType: 'address', name: '_deviceId', type: 'address' },
+      { internalType: 'address', name: '_subscriber', type: 'address' },
     ],
-    name: 'getApproved',
+    name: 'setSubscriberAddress',
     outputs: [
       {
-        internalType: 'address',
+        components: [
+          { internalType: 'bytes32', name: 'firmwareHash', type: 'bytes32' },
+          { internalType: 'bytes32', name: 'deviceDataHash', type: 'bytes32' },
+          { internalType: 'bytes32', name: 'deviceGroupIdHash', type: 'bytes32' },
+          { internalType: 'address', name: 'deviceId', type: 'address' },
+          { internalType: 'address', name: 'subscriber', type: 'address' },
+          { internalType: 'bytes32', name: 'sessionSalt', type: 'bytes32' },
+        ],
+        internalType: 'struct TheRiotProtocol.Device',
         name: '',
-        type: 'address',
+        type: 'tuple',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'getArray',
-    outputs: [
-      {
-        internalType: 'address[3]',
-        name: '',
-        type: 'address[3]',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'test',
-        type: 'bytes32',
-      },
-    ],
-    name: 'getName',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
-    stateMutability: 'pure',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
-      },
-    ],
-    name: 'isApprovedForAll',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'name',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'owner',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'ownerOf',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes4',
-        name: 'interfaceId',
-        type: 'bytes4',
-      },
-    ],
-    name: 'supportsInterface',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'symbol',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'tokenURI',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
-    stateMutability: 'view',
+    stateMutability: 'nonpayable',
     type: 'function',
   },
 ];
