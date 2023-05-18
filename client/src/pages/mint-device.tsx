@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 const MintDevicePage = () => {
   const [firmwareHash, setFirmwareHash] = useState("0x" + crypto.createHash('sha256').update("").digest().toString('hex'));
-  const [deviceIdHash, setDeviceIdHash] = useState("0x" + crypto.createHash('sha256').update("").digest().toString('hex'));
+  const [deviceId, setDeviceId] = useState("");
   const [deviceDataHash, setDeviceDataHash] = useState("0x" + crypto.createHash('sha256').update("").digest().toString('hex'));
   const [deviceGroupIdHash, setDeviceGroupIdHash] = useState("0x" + crypto.createHash('sha256').update("dg_1").digest().toString('hex'));
 
@@ -21,7 +21,7 @@ const MintDevicePage = () => {
   const [chipId, setChipId] = useState("42c1dd00");
 
   async function hashify(contents) {
-    const response = await fetch('http://192.168.1.10:5000/hashify', {
+    const response = await fetch('http://192.168.1.7:5000/hashify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ const MintDevicePage = () => {
 
   useEffect(() => {
     computeDeviceDataHash();
-  }, [firmwareHash, deviceIdHash, deviceDataHash, deviceGroupIdHash, systemName, releaseName, firmwareVersion, chipName, chipId]);
+  }, [firmwareHash, deviceId, deviceDataHash, deviceGroupIdHash, systemName, releaseName, firmwareVersion, chipName, chipId]);
 
 
   return (
@@ -57,7 +57,7 @@ const MintDevicePage = () => {
             </Text>
             <Input
               onChange={(e) => {
-                setDeviceIdHash("0x" + crypto.createHash('sha256').update(e.target.value).digest().toString('hex'))
+                setDeviceId(e.target.value)
                 computeDeviceDataHash();
               }}
               placeholder="Enter the device address" />
@@ -139,9 +139,9 @@ const MintDevicePage = () => {
             <Textarea
               rows={3}
               onChange={(e) => {
-                const firmware = e.target.value.replaceAll(/[\n\s]/g, '');
-                // Firmware to utf-8
-
+                let firmware = e.target.value;
+                firmware = firmware.replaceAll(" ", "")
+                firmware = firmware.replaceAll("\r", "")
 
                 hashify(firmware).then((hash) => {
                   console.log(hash)
@@ -195,10 +195,10 @@ const MintDevicePage = () => {
               <Box borderWidth='1px' borderRadius='lg' p={2} w={"100%"}>
                 <Text fontWeight='bold'>
                   <Badge colorScheme='red'>
-                    Device Id Hash
+                    Device Id
                   </Badge>
                 </Text>
-                <Text fontSize='sm'>{getEllipsisTxt(deviceIdHash, 10)}</Text>
+                <Text fontSize='sm'>{getEllipsisTxt(deviceId, 10)}</Text>
               </Box>
             </Flex>
           </SimpleGrid>
