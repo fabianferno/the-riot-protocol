@@ -1,4 +1,3 @@
-
 import machine
 from binascii import hexlify
 import uos   
@@ -53,11 +52,12 @@ def authenticateDevice(devicePrivateKey, deviceId):
     print("Device id: ", deviceId) 
     
     # Send these token ingredients and get the riot key from the main server
-    response = urequests.post(RIOT_RPC_URL+"/generate-riot-key", json={
+    response = urequests.post(RIOT_RPC_URL+"/generate-riot-key-for-device", json={
         "firmwareHash": firmwareHash,
         "deviceDataHash" : deviceDataHash, 
         "deviceGroupIdHash": deviceGroupIdHash, 
         "deviceId": deviceId
     }, headers={'Content-Type': 'application/json'}) 
+    print(response.json())
     key = response.json().get("key") 
     return key 

@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 const MintDevicePage = () => {
   const [firmwareHash, setFirmwareHash] = useState("0x" + crypto.createHash('sha256').update("").digest().toString('hex'));
-  const [deviceId, setDeviceId] = useState("");
+  const [deviceId, setDeviceId] = useState("0x0000000000000000000000000000000000000000");
   const [deviceDataHash, setDeviceDataHash] = useState("0x" + crypto.createHash('sha256').update("").digest().toString('hex'));
   const [deviceGroupIdHash, setDeviceGroupIdHash] = useState("0x" + crypto.createHash('sha256').update("dg_1").digest().toString('hex'));
 

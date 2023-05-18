@@ -12,7 +12,9 @@ dotenv.config();
 
 // WEB3 CONFIG
 const { contractABI, contractAddress } = require("./constants");
-const web3 = new Web3("http://192.168.1.7:7545");
+const web3 = new Web3(
+  "https://polygon-mumbai.g.alchemy.com/v2/1iVNWMQkisa5Q3isadNXKzdfKL1LJGEN"
+);
 const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 const db = new sqlite3.Database("./database.db", (err) => {

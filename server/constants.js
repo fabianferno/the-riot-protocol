@@ -1,6 +1,141 @@
-const contractAddress = "0x37A71878C621b858e8D39d057A0509De54524Aa0";
+const contractAddress = "0x15262D7Af54f21840ABA96f0e47542C423EeDb44";
 
 const contractABI = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
+      },
+    ],
+    name: "burnDevice",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_firmwareHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "_deviceDataHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "_deviceGroupIdHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
+      },
+    ],
+    name: "mintDevice",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "bytes32",
+            name: "firmwareHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceDataHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceGroupIdHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "address",
+            name: "deviceId",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "subscriber",
+            type: "address",
+          },
+          {
+            internalType: "bytes32",
+            name: "sessionSalt",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct TheRiotProtocol.Device",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_subscriber",
+        type: "address",
+      },
+    ],
+    name: "setSubscriberAddress",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "bytes32",
+            name: "firmwareHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceDataHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceGroupIdHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "address",
+            name: "deviceId",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "subscriber",
+            type: "address",
+          },
+          {
+            internalType: "bytes32",
+            name: "sessionSalt",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct TheRiotProtocol.Device",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -139,128 +274,6 @@ const contractABI = [
       },
     ],
     stateMutability: "pure",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_firmwareHash",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_deviceDataHash",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_deviceGroupIdHash",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "_deviceId",
-        type: "address",
-      },
-    ],
-    name: "mintDevice",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "bytes32",
-            name: "firmwareHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "deviceDataHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "deviceGroupIdHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "address",
-            name: "deviceId",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "subscriber",
-            type: "address",
-          },
-          {
-            internalType: "bytes32",
-            name: "sessionSalt",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct TheRiotProtocol.Device",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_deviceId",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_subscriber",
-        type: "address",
-      },
-    ],
-    name: "setSubscriberAddress",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "bytes32",
-            name: "firmwareHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "deviceDataHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "deviceGroupIdHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "address",
-            name: "deviceId",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "subscriber",
-            type: "address",
-          },
-          {
-            internalType: "bytes32",
-            name: "sessionSalt",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct TheRiotProtocol.Device",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "nonpayable",
     type: "function",
   },
 ];
