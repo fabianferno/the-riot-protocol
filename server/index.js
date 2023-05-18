@@ -4,6 +4,30 @@ const morgan = require("morgan");
 const app = express();
 const axios = require("axios");
 const sqlite3 = require("sqlite3").verbose();
+const Web3 = require("web3");
+const crypto = require("crypto");
+
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+
+const dotenv = require("dotenv");
+dotenv.config();
+
+const {
+  contractABI,
+  contractAddress,
+  privateKey,
+  providerUrl,
+} = require("./constants");
+
+// try {
+//   const provider = new HDWalletProvider([privateKey], providerUrl);
+//   const web3 = new Web3(provider);
+//   const contract = new web3.eth.Contract(contractABI, contractAddress);
+
+//   console.log("Connected to the blockchain.");
+// } catch (error) {
+//   console.log(error);
+// }
 
 const db = new sqlite3.Database("./database.db", (err) => {
   if (err) {
@@ -12,13 +36,25 @@ const db = new sqlite3.Database("./database.db", (err) => {
   console.log("Connected to the riot database.");
 });
 
+// Add the error handler middleware function to the app's middleware stack
+app.use((err, req, res, next) => {
+  console.error(err); // Log the error to the console
+
+  // Set the response status code based on the error
+  if (err.status) {
+    res.status(err.status);
+  } else {
+    res.status(500); // Internal server error
+  }
+
+  // Send a JSON response with the error message
+  res.json({ error: err.message });
+});
+
 // Middlewares
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
-
-const dotenv = require("dotenv");
-dotenv.config();
 
 app.get("/store", async (req, res) => {
   try {
@@ -89,25 +125,51 @@ app.get("/riot-token", async (req, res) => {
   }
 });
 
-app.get("/test-random-key", async (req, res) => {
+app.post("/generate-riot-key", async (req, res) => {
   try {
-    // Generate a random bytes32 hash
-    const key = web3.utils.randomHex(16);
+    const {
+      firmwareHash,
+      deviceDataHash,
+      subscriberHash,
+      deviceGroupIdHash,
+      deviceId,
+    } = req.body;
 
-    res.status(200).json({ key });
+    // Generate a random bytes32 hash
+    const key = "0x2f052ba6c8e962a69b5fc75790ecd504";
+
+    res.status(200).json({
+      key,
+      body: {
+        firmwareHash,
+        deviceDataHash,
+        subscriberHash,
+        deviceGroupIdHash,
+        deviceId,
+      },
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// DB
-// CREATE TABLE sensor_data (
-//   id INTEGER PRIMARY KEY AUTOINCREMENT,
-//   deviceId TEXT,
-//   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-//   sensorValue TEXT
-// );
+app.post("/hashify", async (req, res) => {
+  try {
+    const { contents } = req.body;
+    console.log("Contents: ", contents);
+    const hash = crypto.createHash("sha256").update(contents).digest("hex");
+    console.log("Hash: 0x", hash);
+
+    res.status(200).json({
+      hash,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post("/db", async (req, res) => {
   try {
     const { sensorValue, deviceId } = req.body;
@@ -155,7 +217,16 @@ app.get("/db", async (req, res) => {
   }
 });
 
-app.listen(parseInt(process.env.PORT || "5000"), "0.0.0.0", () => {
-  console.log(`Server is listening on port ${process.env.PORT || "5000"}`);
-  console.log("http://localhost:5000");
+// Listen with error handler
+const server = app.listen(
+  parseInt(process.env.PORT || "5000"),
+  "0.0.0.0",
+  () => {
+    console.log(`Server is listening on port ${process.env.PORT || "5000"}`);
+    console.log("http://localhost:5000");
+  }
+);
+
+server.on("error", (err) => {
+  console.error(err);
 });

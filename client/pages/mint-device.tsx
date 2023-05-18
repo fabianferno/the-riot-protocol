@@ -8,27 +8,38 @@ import { useState, } from 'react';
 import { useEffect } from 'react';
 
 const MintDevicePage = () => {
-  const [firmwareHash, setFirmwareHash] = useState(crypto.createHash('sha256').update("").digest().toString('hex'));
-  const [deviceIdHash, setDeviceIdHash] = useState(crypto.createHash('sha256').update("").digest().toString('hex'));
-  const [deviceDataHash, setDeviceDataHash] = useState(crypto.createHash('sha256').update("").digest().toString('hex'));
-  const [deviceGroupIdHash, setDeviceGroupIdHash] = useState(crypto.createHash('sha256').update("dg_1").digest().toString('hex'));
+  const [firmwareHash, setFirmwareHash] = useState("0x" + crypto.createHash('sha256').update("").digest().toString('hex'));
+  const [deviceIdHash, setDeviceIdHash] = useState("0x" + crypto.createHash('sha256').update("").digest().toString('hex'));
+  const [deviceDataHash, setDeviceDataHash] = useState("0x" + crypto.createHash('sha256').update("").digest().toString('hex'));
+  const [deviceGroupIdHash, setDeviceGroupIdHash] = useState("0x" + crypto.createHash('sha256').update("dg_1").digest().toString('hex'));
 
 
   const [systemName, setSystemName] = useState("esp8266");
   const [releaseName, setReleaseName] = useState("2.2.0-dev(9422289)");
   const [firmwareVersion, setFirmwareVersion] = useState("v1.19.1 on 2022-06-18");
   const [chipName, setChipName] = useState("ESP module (1M) with ESP8266");
-  const [chipId, setChipId] = useState("5c:cf:7f:00:00:00");
+  const [chipId, setChipId] = useState("42c1dd00");
+
+  async function hashify(contents) {
+    const response = await fetch('http://192.168.1.10:5000/hashify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ contents })
+    });
+    const { hash } = await response.json();
+    return `0x${hash}`;
+  }
 
 
   function computeDeviceDataHash() {
-    const deviceData = firmwareVersion + chipName + chipId + systemName + releaseName;
-    setDeviceDataHash(crypto.createHash('sha256').update(deviceData).digest().toString('hex'));
+    const deviceData = systemName + releaseName + firmwareVersion + chipName + chipId;
+    setDeviceDataHash("0x" + crypto.createHash('sha256').update(deviceData).digest().toString('hex'));
   }
 
   useEffect(() => {
     computeDeviceDataHash();
-    console.log("test")
   }, [firmwareHash, deviceIdHash, deviceDataHash, deviceGroupIdHash, systemName, releaseName, firmwareVersion, chipName, chipId]);
 
 
@@ -40,17 +51,28 @@ const MintDevicePage = () => {
           Mint a new device
         </Text>
         <form>
+          <div>
+            <Text mt="20px" mb="8px">
+              Device ID
+            </Text>
+            <Input
+              onChange={(e) => {
+                setDeviceIdHash("0x" + crypto.createHash('sha256').update(e.target.value).digest().toString('hex'))
+                computeDeviceDataHash();
+              }}
+              placeholder="Enter the device address" />
+          </div>
           <SimpleGrid columns={2} spacing={2}>
             <div>
               <Text mt="20px" mb="8px">
-                Device ID
+                Chip ID / MAC address
               </Text>
-              <Input
-                onChange={(e) => {
-                  setDeviceIdHash(crypto.createHash('sha256').update(e.target.value).digest().toString('hex'))
-                }}
-                placeholder="Enter the device ID" />
+              <Input onChange={(e) => {
+                setChipId(e.target.value);
+                computeDeviceDataHash();
+              }} defaultValue={'42c1dd00'} placeholder="Enter the chip ID" />
             </div>
+
 
             <div>
               <Text mt="20px" mb="8px">
@@ -58,7 +80,8 @@ const MintDevicePage = () => {
               </Text>
               <Input
                 onChange={(e) => {
-                  setDeviceGroupIdHash(crypto.createHash('sha256').update(e.target.value).digest().toString('hex'))
+                  setDeviceGroupIdHash("0x" + crypto.createHash('sha256').update(e.target.value).digest().toString('hex'))
+                  computeDeviceDataHash();
                 }}
                 defaultValue={'dg_1'} placeholder="Enter the device group ID" />
             </div>
@@ -109,99 +132,91 @@ const MintDevicePage = () => {
 
           </SimpleGrid>
 
-
-
-
-
           <div>
             <Text mt="20px" mb="8px">
-              Chip ID / MAC address
-            </Text>
-            <Input onChange={(e) => {
-              setChipId(e.target.value);
-              computeDeviceDataHash();
-            }} defaultValue={'5c:cf:7f:00:00:00'} placeholder="Enter the chip ID" />
-          </div>
-
-
-
-
-
-          <div>
-            <Text mt="20px" mb="15px">
               Firmware
             </Text>
             <Textarea
-              rows={6}
+              rows={3}
               onChange={(e) => {
-                setFirmwareHash(crypto.createHash('sha256').update(e.target.value).digest().toString('hex'))
+                const firmware = e.target.value.replaceAll(/[\n\s]/g, '');
+                // Firmware to utf-8
+
+
+                hashify(firmware).then((hash) => {
+                  console.log(hash)
+                  setFirmwareHash(hash)
+                });
+                computeDeviceDataHash();
               }}
               placeholder="Paste the contents of main.py here" />
           </div>
 
-          <Text mt={10} fontSize={"2xl"}>
-            <strong>Token Ingredients</strong>
-            <Button mx={6} colorScheme="teal" variant="outline">
-              Mint your Device to the Blockchain
-            </Button>
-          </Text>
-          <Box my={3}><hr /></Box>
+
+          <Box mt={5} mb={3}><hr /></Box>
 
           <SimpleGrid columns={4} spacing={2}>
 
 
-            <Flex my={'2'}>
-              <Box borderWidth='1px' borderRadius='lg' p={2}>
+            <Flex my={'2'} >
+              <Box borderWidth='1px' borderRadius='lg' p={2} w={"100%"}>
                 <Text fontWeight='bold'>
                   <Badge colorScheme='green'>
                     Firmware Hash
                   </Badge>
                 </Text>
-                <Text fontSize='sm'>{getEllipsisTxt(firmwareHash, 6)}</Text>
+                <Text fontSize='sm'>{getEllipsisTxt(firmwareHash, 10)}</Text>
               </Box>
             </Flex>
 
             <Flex my={'2'}>
-              <Box borderWidth='1px' borderRadius='lg' p={2}>
+              <Box borderWidth='1px' borderRadius='lg' p={2} w={"100%"}>
                 <Text fontWeight='bold'>
                   <Badge colorScheme='orange'>
                     Device Metadata Hash
                   </Badge>
                 </Text>
-                <Text fontSize='sm'>{getEllipsisTxt(deviceDataHash)}</Text>
+                <Text fontSize='sm'>{getEllipsisTxt(deviceDataHash, 10)}</Text>
               </Box>
             </Flex>
 
             <Flex my={'2'}>
-              <Box borderWidth='1px' borderRadius='lg' p={2}>
+              <Box borderWidth='1px' borderRadius='lg' p={2} w={"100%"}>
                 <Text fontWeight='bold'>
                   <Badge colorScheme='purple'>
                     Device Group ID Hash
                   </Badge>
                 </Text>
-                <Text fontSize='sm'>{getEllipsisTxt(deviceGroupIdHash, 6)}</Text>
+                <Text fontSize='sm'>{getEllipsisTxt(deviceGroupIdHash, 10)}</Text>
               </Box>
             </Flex>
 
             <Flex my={'2'}>
-              <Box borderWidth='1px' borderRadius='lg' p={2}>
+              <Box borderWidth='1px' borderRadius='lg' p={2} w={"100%"}>
                 <Text fontWeight='bold'>
                   <Badge colorScheme='red'>
                     Device Id Hash
                   </Badge>
                 </Text>
-                <Text fontSize='sm'>{getEllipsisTxt(deviceIdHash, 6)}</Text>
+                <Text fontSize='sm'>{getEllipsisTxt(deviceIdHash, 10)}</Text>
               </Box>
             </Flex>
           </SimpleGrid>
 
+          <Box mt={3} mb={3}><hr /></Box>
 
-
-
+          <Flex mt={5} justifyContent={"space-between"}>
+            <Text fontSize={"2xl"}>
+              <strong>Token Ingredients</strong>
+            </Text>
+            <Button mx={6} colorScheme="teal" variant="outline">
+              Mint your Device
+            </Button>
+          </Flex>
 
         </form>
       </div>
-    </Default>
+    </Default >
   );
 };
 

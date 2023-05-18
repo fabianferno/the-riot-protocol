@@ -1,6 +1,128 @@
-const contractAddress = "0xD7d682C1c983B3D0747aB4DA588AfBB2f629bC0e";
+const contractAddress = "0x758C68fe6a5ABd67E10625ac988D9A38A36f8A61";
 
 const contractABI = [
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "_firmwareHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "_deviceDataHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "_deviceGroupIdHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
+      },
+    ],
+    name: "mintDevice",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "bytes32",
+            name: "firmwareHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceDataHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceGroupIdHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "address",
+            name: "deviceId",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "subscriber",
+            type: "address",
+          },
+          {
+            internalType: "bytes32",
+            name: "sessionSalt",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct RiotV2.Device",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_deviceId",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_subscriber",
+        type: "address",
+      },
+    ],
+    name: "setSubscriberAddress",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "bytes32",
+            name: "firmwareHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceDataHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "bytes32",
+            name: "deviceGroupIdHash",
+            type: "bytes32",
+          },
+          {
+            internalType: "address",
+            name: "deviceId",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "subscriber",
+            type: "address",
+          },
+          {
+            internalType: "bytes32",
+            name: "sessionSalt",
+            type: "bytes32",
+          },
+        ],
+        internalType: "struct RiotV2.Device",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -15,8 +137,33 @@ const contractABI = [
       },
     ],
     name: "checkIfDeviceIsMinted",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32[]",
+        name: "hashes",
+        type: "bytes32[]",
+      },
+    ],
+    name: "computeMerkleRoot",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
   {
@@ -138,128 +285,6 @@ const contractABI = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "_firmwareHash",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_deviceDataHash",
-        type: "bytes32",
-      },
-      {
-        internalType: "bytes32",
-        name: "_deviceGroupIdHash",
-        type: "bytes32",
-      },
-      {
-        internalType: "address",
-        name: "_deviceId",
-        type: "address",
-      },
-    ],
-    name: "mintDevice",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "bytes32",
-            name: "firmwareHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "deviceDataHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "deviceGroupIdHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "address",
-            name: "deviceId",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "subscriber",
-            type: "address",
-          },
-          {
-            internalType: "bytes32",
-            name: "sessionSalt",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct Riot.Device",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_deviceId",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_subscriber",
-        type: "address",
-      },
-    ],
-    name: "setSubscriberAddress",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "bytes32",
-            name: "firmwareHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "deviceDataHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "deviceGroupIdHash",
-            type: "bytes32",
-          },
-          {
-            internalType: "address",
-            name: "deviceId",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "subscriber",
-            type: "address",
-          },
-          {
-            internalType: "bytes32",
-            name: "sessionSalt",
-            type: "bytes32",
-          },
-        ],
-        internalType: "struct Riot.Device",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "nonpayable",
     type: "function",
   },
 ];
