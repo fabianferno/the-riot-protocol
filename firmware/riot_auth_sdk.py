@@ -2,16 +2,20 @@
 import machine
 from binascii import hexlify
 import uos   
-import urequests 
+import urequests  
+
+
+RIOT_RPC_URL = "http://192.168.1.7:5000"
+
 
 # Helper functions start here
 def hashify(contents):
     # Send these token ingredients and get the riot key from the main server
-    response = urequests.post("http://192.168.1.7:5000/hashify", json={
+    response = urequests.post(RIOT_RPC_URL+"/hashify", json={
         "contents": contents,
     }, headers={'Content-Type': 'application/json'}) 
-    hash = response.json().get("hash") 
-    return "0x"+hash
+    hash = "0x"+ response.json().get("hash") 
+    return hash
 # Helper functions end here 
 
 
@@ -36,11 +40,6 @@ def getDeviceDataHash():
     # Get hash of concatenated string of device data
     return hashify(device_data)
 
-
-def getSubscriberHash():
-    subscriber_address = "0x64574dDbe98813b23364704e0B00E2e71fC5aD17"
-    return hashify(subscriber_address.encode())
-
 def getDeviceGroupIdHash():
     return hashify("dg_1".encode())
 
@@ -48,19 +47,15 @@ def authenticateDevice(devicePrivateKey, deviceId):
     firmwareHash = getFirmwareHash()
     print("Firmware hash: ", firmwareHash)  
     deviceDataHash = getDeviceDataHash()
-    print("Device data hash: ", deviceDataHash)
-    subscriberHash = getSubscriberHash()
-    print("Subscriber hash: ", subscriberHash)
+    print("Device data hash: ", deviceDataHash) 
     deviceGroupIdHash = getDeviceGroupIdHash()
     print("Device group id hash: ", deviceGroupIdHash)
-    print("Device id: ", deviceId)
-    print("")
+    print("Device id: ", deviceId) 
     
     # Send these token ingredients and get the riot key from the main server
-    response = urequests.post("http://192.168.1.10:5000/generate-riot-key", json={
+    response = urequests.post(RIOT_RPC_URL+"/generate-riot-key", json={
         "firmwareHash": firmwareHash,
-        "deviceDataHash" : deviceDataHash,
-        "subscriberHash" : subscriberHash,
+        "deviceDataHash" : deviceDataHash, 
         "deviceGroupIdHash": deviceGroupIdHash, 
         "deviceId": deviceId
     }, headers={'Content-Type': 'application/json'}) 
