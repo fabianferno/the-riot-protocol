@@ -1,7 +1,6 @@
 import { Box, Container, Flex, HStack } from '@chakra-ui/react';
 import { ColorModeButton, MoralisLogo, NavBar } from 'components/elements';
-import { ConnectButton } from '../ConnectButton';
-
+import ConnectButton from '../../metamask/ConnectButton';
 const Header = () => {
   return (
     <Box borderBottom="1px" borderBottomColor="chakra-border-color">
