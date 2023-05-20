@@ -7,7 +7,7 @@ import crypto from 'crypto';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import contractCall from '../components/metamask/lib/contract-call';
-import { SDK, Auth, TEMPLATES, Metadata } from '@infura/sdk';
+// import { SDK, Auth, TEMPLATES, Metadata } from '@infura/sdk';
 import { ABI, contractAddress, RIOT_RPC_URL } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 
@@ -48,15 +48,15 @@ const MintDevicePage = () => {
     setDeviceDataHash('0x' + crypto.createHash('sha256').update(deviceData).digest().toString('hex'));
   }
 
-  useEffect(() => {
-    const auth = new Auth({
-      projectId: process.env.INFURA_API_KEY,
-      secretId: process.env.INFURA_API_KEY_SECRET,
-      privateKey: process.env.WALLET_PRIVATE_KEY,
-      chainId: 80001,
-    });
-    const sdk = new SDK(auth);
-  }, []);
+  // useEffect(() => {
+  //   const auth = new Auth({
+  //     projectId: process.env.INFURA_API_KEY,
+  //     secretId: process.env.INFURA_API_KEY_SECRET,
+  //     privateKey: process.env.WALLET_PRIVATE_KEY,
+  //     chainId: 80001,
+  //   });
+  //   const sdk = new SDK(auth);
+  // }, []);
 
   useEffect(() => {
     computeDeviceDataHash();

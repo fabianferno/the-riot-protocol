@@ -1,18 +1,15 @@
 import { Icon, ChevronRightIcon } from '@chakra-ui/icons';
 import { useColorModeValue, Stack, Flex, Box, Text, Link } from '@chakra-ui/react';
-import { Illustration } from '@web3uikit/core';
-import { Logo } from '@web3uikit/core/dist/lib/Illustrations/types';
 import NextLink from 'next/link';
 
 export interface ISubNav {
   label: string;
   subLabel?: string;
-  logo?: Logo;
   href?: string;
   children?: Array<ISubNav>;
 }
 
-const SubNav = ({ label, href, subLabel, logo }: ISubNav) => {
+const SubNav = ({ label, href, subLabel }: ISubNav) => {
   return (
     <NextLink href={href || '#'} legacyBehavior>
       <Link
@@ -23,7 +20,7 @@ const SubNav = ({ label, href, subLabel, logo }: ISubNav) => {
         _hover={{ bg: useColorModeValue('green.50', 'gray.900') }}
       >
         <Stack direction={'row'} align={'center'}>
-          <Illustration logo={logo as Logo} width={46} height={46} id={`${label}-navitem`} />
+          {/* <Illustration logo={logo as Logo} width={46} height={46} id={`${label}-navitem`} /> */}
           <Box>
             <Text transition={'all .3s ease'} _groupHover={{ color: 'green.400' }} fontWeight={500}>
               {label}
