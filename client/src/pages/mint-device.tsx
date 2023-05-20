@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import contractCall from '../components/metamask/lib/contract-call';
 import { ABI, contractAddress } from 'components/metamask/lib/constants';
+import { SDK, Auth, TEMPLATES, Metadata } from '@infura/sdk';
 import { useSelector } from 'react-redux';
 const MintDevicePage = () => {
   const { currentAccount } = useSelector((state: any) => state.metamask);
@@ -44,6 +45,16 @@ const MintDevicePage = () => {
     const deviceData = systemName + releaseName + firmwareVersion + chipName + chipId;
     setDeviceDataHash('0x' + crypto.createHash('sha256').update(deviceData).digest().toString('hex'));
   }
+
+  useEffect(() => {
+    const auth = new Auth({
+      projectId: process.env.INFURA_API_KEY,
+      secretId: process.env.INFURA_API_KEY_SECRET,
+      privateKey: process.env.WALLET_PRIVATE_KEY,
+      chainId: 80001,
+    });
+    const sdk = new SDK(auth);
+  }, []);
 
   useEffect(() => {
     computeDeviceDataHash();
