@@ -7,10 +7,14 @@ import crypto from 'crypto';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import contractCall from '../components/metamask/lib/contract-call';
-import { ABI, contractAddress } from 'components/metamask/lib/constants';
+import { ABI, contractAddress, RIOT_RPC_URL } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
+
+
+
 const MintDevicePage = () => {
   const { currentAccount } = useSelector((state: any) => state.metamask);
+
   const [firmwareHash, setFirmwareHash] = useState(
     '0x' + crypto.createHash('sha256').update('').digest().toString('hex'),
   );
@@ -28,8 +32,8 @@ const MintDevicePage = () => {
   const [chipName, setChipName] = useState('ESP module (1M) with ESP8266');
   const [chipId, setChipId] = useState('42c1dd00');
 
-  async function hashify(contents) {
-    const response = await fetch('http://192.168.1.7:5000/hashify', {
+  async function hashify(contents: any) {
+    const response = await fetch(`${RIOT_RPC_URL}/hashify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

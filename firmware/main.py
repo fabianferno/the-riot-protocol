@@ -7,10 +7,11 @@ import binascii
 import urequests
 from ubinascii import hexlify
 
-DEVICE_ID = "0x0cfecb5D359E6C59ABd1d2Aa794F52C15055f451"
-DEVICE_PRIVATE_KEY = "0x248218dfcc0992e32a8b9589f9f8e81eb285c6326cce84347ca3bfd6a3c03a50"
+DEVICE_ID = "0x37fd32FE39b56d6b8C2F5eEFF24d7E65809f7A10"
+DEVICE_PRIVATE_KEY = "0xc923ef2804331462124a99e7705b90e4d02a141c75871a0e7ff9adbfbe3fb17a"
 
 riot_key_hex  = authenticateDevice(DEVICE_PRIVATE_KEY, DEVICE_ID) 
+
 # Convert the hex key string to bytes
 riot_key_bytes = binascii.unhexlify(riot_key_hex[2:])
 riotKey = binascii.hexlify(riot_key_bytes) 
@@ -32,16 +33,18 @@ while(True):
 
     # Encrypt the padded sensor value
     encrypted_sensor_value = cipher.encrypt(sensor_value_bytes_padded) 
-     
-  
-    print("Encrypted value: ", hexlify(encrypted_sensor_value)) 
-    
+
     # Wait for 2 seconds
     time.sleep(2) 
     
+    data = {
+        "sensorValue": hexlify(encrypted_sensor_value),
+        "deviceId": ""+DEVICE_ID
+    }
+    
+    print(data)
+    
     # Write encrypted data to DB
-    response = urequests.post(RIOT_RPC_URL+"/data", json={
-        "sensorValue": encrypted_sensor_value,
-        "deviceId": DEVICE_ID
-    }, headers={'Content-Type': 'application/json'}) 
-    data =  response.json() 
+    response = urequests.post(RIOT_RPC_URL+"/data", json=data, headers={'Content-Type': 'application/json'}) 
+    result = response.json()
+    print(result)

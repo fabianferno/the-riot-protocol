@@ -18,7 +18,7 @@ const AssignDevicesPage = () => {
       {/* A form for minting a new device */}
       <div>
         <Text fontSize="5xl" fontWeight="bold" mb="20px">
-          Assign devices to subscribers (users)
+          Assign devices to users
         </Text>
         <form>
           <div>
