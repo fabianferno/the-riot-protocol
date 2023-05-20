@@ -1,5 +1,5 @@
 
-import { Heading, VStack, Text, Button } from '@chakra-ui/react';
+import { Heading, VStack, Text, Button, Image, Box } from '@chakra-ui/react';
 import Link from "next/link"
 
 const Home = () => {
@@ -30,6 +30,8 @@ const Home = () => {
       <Link href="/mint-device">
         <Button size={"lg"} style={{ marginTop: "30px" }}>Get started</Button>
       </Link>
+
+      <Box style={{ marginTop: "30px" }} bg="white" p="20px" ><Image src="riot.png" w="700px" /></Box>
 
 
     </VStack>

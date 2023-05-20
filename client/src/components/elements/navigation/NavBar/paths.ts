@@ -1,7 +1,6 @@
 import { ISubNav } from '../SubNav/SubNav';
 
 const NAV_LINKS: ISubNav[] = [
-  { label: 'Home', href: '/' },
   {
     label: 'Mint Device',
     href: '/mint-device',
@@ -9,6 +8,10 @@ const NAV_LINKS: ISubNav[] = [
   {
     label: 'Assign Device',
     href: '/assign-devices',
+  },
+  {
+    label: 'View Data',
+    href: '/view-data',
   },
   {
     label: 'Transactions',

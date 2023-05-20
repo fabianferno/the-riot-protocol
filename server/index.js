@@ -49,7 +49,7 @@ app.post("/generate-riot-key-for-device", async (req, res) => {
     const { firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId } =
       req.body;
 
-    const result = await contract.methods
+    let key = await contract.methods
       .generateRiotKeyForDevice(
         firmwareHash,
         deviceDataHash,
@@ -57,9 +57,10 @@ app.post("/generate-riot-key-for-device", async (req, res) => {
         deviceId
       )
       .call();
-
+    riotKey = "0x" + key.substr(2, 16);
     res.status(200).json({
-      key: result,
+      key: riotKey,
+      // key: "0x2f052ba6c8e962a69b5fc75790ecd504",
     });
   } catch (error) {
     console.log(error);
@@ -70,9 +71,9 @@ app.post("/generate-riot-key-for-device", async (req, res) => {
 app.post("/hashify", async (req, res) => {
   try {
     const { contents } = req.body;
-    console.log("Contents: ", contents);
+    // console.log("Contents: ", contents);
     const hash = crypto.createHash("sha256").update(contents).digest("hex");
-    console.log("Hash: 0x", hash);
+    // console.log("Hash: 0x", hash);
 
     res.status(200).json({
       hash,
@@ -86,6 +87,8 @@ app.post("/hashify", async (req, res) => {
 app.post("/data", async (req, res) => {
   try {
     const { sensorValue, deviceId } = req.body;
+
+    console.log(req.body);
 
     db.run(
       "INSERT INTO sensor_data (deviceId, sensorValue) VALUES (?, ?)",

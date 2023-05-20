@@ -3,9 +3,7 @@ from binascii import hexlify
 import uos   
 import urequests  
 
-
-RIOT_RPC_URL = "http://192.168.1.7:5000"
-
+RIOT_RPC_URL = "http://192.168.43.141:5000"
 
 # Helper functions start here
 def hashify(contents):
@@ -58,6 +56,5 @@ def authenticateDevice(devicePrivateKey, deviceId):
         "deviceGroupIdHash": deviceGroupIdHash, 
         "deviceId": deviceId
     }, headers={'Content-Type': 'application/json'}) 
-    print(response.json())
     key = response.json().get("key") 
     return key 
