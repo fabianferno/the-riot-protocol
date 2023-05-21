@@ -20,7 +20,7 @@ import crypto from 'crypto';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import contractCall from '../components/metamask/lib/contract-call';
-import { ABI, contractAddress, RIOT_RPC_URL } from 'components/metamask/lib/constants';
+import { ABI, contractAddress, RIOT_RPC_URL, riotDeviceImages } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 
 const MintDevicePage = () => {
@@ -318,33 +318,41 @@ const MintDevicePage = () => {
                 buttonText == 'Invalid Device ID'
               }
               onClick={async () => {
+                setStatus('Uploading RiotNFT to IPFS...');
+                setShowNotification(true);
+                let metadataHash;
+                try {
+                  const response = await fetch('/api/deploy-metadata', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                      name: 'Riot Association',
+                      symbol: 'RA',
+                      groupId: deviceGroupIdHash,
+                      deviceId: deviceId,
+                      image: riotDeviceImages[Math.floor(Math.random() * riotDeviceImages.length)],
+                      deviceDataHash: deviceDataHash,
+                    }),
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                  });
+                  const data = await response.json();
+                  const { hash } = data;
+                  metadataHash = hash.url;
+                  console.log('IPFS Hash of the deployed Riot NFT: ' + hash);
+                } catch (e) {
+                  console.log(e);
+                }
+                setStatus('Waiting for Confirmation...');
+                setShowNotification(true);
                 if (buttonText === 'Register and Mint Device') {
-                  setStatus('Registering your group...');
-                  setShowNotification(true);
-                  try {
-                    const response = await fetch('/api/deploy-group', {
-                      method: 'POST',
-                      body: JSON.stringify({ name: 'Riot Association', symbol: 'RA' }),
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                    });
-                    const data = await response.json();
-                    const { address } = data;
-                    console.log(address);
-                  } catch (e) {
-                    console.log(e);
-                  }
-                  setStatus('Waiting for Confirmation...');
-                  setShowNotification(true);
-
                   const response = await contractCall(
                     contractAddress,
                     currentAccount,
                     ABI,
-                    ['Riot Association', 'RA', firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId],
+                    ['Riot Association', 'RA', firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId, metadataHash],
                     0,
-                    'registerGroup(string,string,bytes32,bytes32,bytes32,address)',
+                    'registerGroup(string,string,bytes32,bytes32,bytes32,address,string)',
                     false,
                   );
                   if (response == 'Execution Complete') {
@@ -358,14 +366,13 @@ const MintDevicePage = () => {
                     setStatus('Transaction Failed or Cancelled');
                   }
                 } else {
-                  setStatus('Waiting for Confirmation...');
                   const response = await contractCall(
                     contractAddress,
                     currentAccount,
                     ABI,
-                    [firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId],
+                    [firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId, metadataHash],
                     0,
-                    'mintDevice(bytes32,bytes32,bytes32,address)',
+                    'mintDevice(bytes32,bytes32,bytes32,address,string)',
                     false,
                   );
 

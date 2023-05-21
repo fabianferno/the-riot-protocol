@@ -1,6 +1,6 @@
 const RIOT_RPC_URL = 'http://192.168.0.144:5000';
 
-const contractAddress = '0xe7c8eE22E1068447f48bC3859B6f2C7bc0D3c485';
+const contractAddress = '0x1FA3bd42da66fdC0B343FA723D12b71F926AB948';
 const riotDeviceImages = [
   'https://bafkreidmkpibpkguvrnzuqgmudacxji4fl6g437wrtb74t5uliqihuhede.ipfs.nftstorage.link/',
   'https://bafkreibufkhlr6kaq4mhb4tpczbwtzm7jx2q7nrnwed2ndk6klrv6da54u.ipfs.nftstorage.link/',
@@ -91,6 +91,7 @@ const ABI = [
       { internalType: 'bytes32', name: '_deviceDataHash', type: 'bytes32' },
       { internalType: 'bytes32', name: '_deviceGroupIdHash', type: 'bytes32' },
       { internalType: 'address', name: '_deviceId', type: 'address' },
+      { internalType: 'string', name: '_uri', type: 'string' },
     ],
     name: 'mintDevice',
     outputs: [],
@@ -105,6 +106,7 @@ const ABI = [
       { internalType: 'bytes32', name: '_deviceDataHash', type: 'bytes32' },
       { internalType: 'bytes32', name: '_deviceGroupIdHash', type: 'bytes32' },
       { internalType: 'address', name: '_deviceId', type: 'address' },
+      { internalType: 'string', name: '_uri', type: 'string' },
     ],
     name: 'registerGroup',
     outputs: [],
@@ -117,6 +119,16 @@ const ABI = [
       { internalType: 'address', name: '_subscriber', type: 'address' },
     ],
     name: 'setSubscriberAddress',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'bytes32', name: '_firmwareHash', type: 'bytes32' },
+      { internalType: 'address', name: '_deviceId', type: 'address' },
+    ],
+    name: 'updateFirmware',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
