@@ -27,9 +27,7 @@ const MintDevicePage = () => {
   const { currentAccount } = useSelector((state: any) => state.metamask);
 
   const [buttonText, setButtonText] = useState('Enter Device Group Id Hash');
-  const [firmwareHash, setFirmwareHash] = useState(
-    '0x' + crypto.createHash('sha256').update('').digest().toString('hex'),
-  );
+  const [firmwareHash, setFirmwareHash] = useState('');
   const [deviceId, setDeviceId] = useState('');
   const [deviceDataHash, setDeviceDataHash] = useState(
     '0x' + crypto.createHash('sha256').update('').digest().toString('hex'),
@@ -37,13 +35,14 @@ const MintDevicePage = () => {
   const [deviceGroupIdHash, setDeviceGroupIdHash] = useState(
     '0x' + crypto.createHash('sha256').update('dg_1').digest().toString('hex'),
   );
-  const [status, setStatus] = useState('');
   const [systemName, setSystemName] = useState('esp8266');
   const [releaseName, setReleaseName] = useState('2.2.0-dev(9422289)');
   const [firmwareVersion, setFirmwareVersion] = useState('v1.19.1 on 2022-06-18');
   const [chipName, setChipName] = useState('ESP module (1M) with ESP8266');
   const [chipId, setChipId] = useState('42c1dd00');
+  const [deviceMinted, setDeviceMinted] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [status, setStatus] = useState('');
 
   const closeNotification = () => {
     setShowNotification(false);
@@ -64,26 +63,52 @@ const MintDevicePage = () => {
     const deviceData = systemName + releaseName + firmwareVersion + chipName + chipId;
     setDeviceDataHash('0x' + crypto.createHash('sha256').update(deviceData).digest().toString('hex'));
   }
+  async function getIsGroupRegistered(hash: string) {
+    if (hash != '') {
+      const isRegistered = await contractCall(
+        contractAddress,
+        currentAccount,
+        ABI,
+        [hash],
+        0,
+        'isGroupRegistered(bytes32)',
+        true,
+      );
+
+      if (isRegistered) {
+        setButtonText('Mint Device');
+      } else {
+        setButtonText('Register and Mint Device');
+      }
+    }
+  }
+
+  async function getIsDeviceIdMinted(hash: string) {
+    if (hash != '') {
+      const isDeviceMinted = await contractCall(
+        contractAddress,
+        currentAccount,
+        ABI,
+        [hash],
+        0,
+        'isDeviceMinted(address)',
+        true,
+      );
+      console.log(isDeviceMinted);
+      if (isDeviceMinted == 'Invalid Params') {
+        setButtonText('Invalid Device ID');
+      } else if (isDeviceMinted == true) {
+        setButtonText('Device already minted');
+        setDeviceMinted(true);
+      } else if (isDeviceMinted == false) {
+        await getIsGroupRegistered(deviceGroupIdHash);
+      }
+    }
+  }
 
   useEffect(() => {
     (async () => {
-      if (deviceGroupIdHash != '') {
-        const isRegistered = await contractCall(
-          contractAddress,
-          currentAccount,
-          ABI,
-          [deviceGroupIdHash],
-          0,
-          'isGroupRegistered(bytes32)',
-          true,
-        );
-
-        if (isRegistered) {
-          setButtonText('Mint Device');
-        } else {
-          setButtonText('Register and Mint Device');
-        }
-      }
+      await getIsGroupRegistered(deviceGroupIdHash);
     })();
   }, []);
 
@@ -114,9 +139,10 @@ const MintDevicePage = () => {
               Device ID
             </Text>
             <Input
-              onChange={(e) => {
+              onChange={async (e) => {
                 setDeviceId(e.target.value);
                 computeDeviceDataHash();
+                await getIsDeviceIdMinted(e.target.value);
               }}
               placeholder="Enter the device address"
             />
@@ -141,11 +167,11 @@ const MintDevicePage = () => {
                 Device Group ID
               </Text>
               <Input
-                onChange={(e) => {
-                  setDeviceGroupIdHash(
-                    '0x' + crypto.createHash('sha256').update(e.target.value).digest().toString('hex'),
-                  );
+                onChange={async (e) => {
+                  let hash = '0x' + crypto.createHash('sha256').update(e.target.value).digest().toString('hex');
+                  setDeviceGroupIdHash(hash);
                   computeDeviceDataHash();
+                  await getIsGroupRegistered(hash);
                 }}
                 defaultValue={'dg_1'}
                 placeholder="Enter the device group ID"
@@ -284,7 +310,13 @@ const MintDevicePage = () => {
               mx={6}
               colorScheme="teal"
               variant="outline"
-              isDisabled={buttonText === 'Enter Device Group Id Hash' || deviceId === ''}
+              isDisabled={
+                buttonText === 'Enter Device Group Id Hash' ||
+                deviceId === '' ||
+                firmwareHash == '' ||
+                deviceMinted ||
+                buttonText == 'Invalid Device ID'
+              }
               onClick={async () => {
                 if (buttonText === 'Register and Mint Device') {
                   setStatus('Registering your group...');
@@ -304,6 +336,8 @@ const MintDevicePage = () => {
                     console.log(e);
                   }
                   setStatus('Waiting for Confirmation...');
+                  setShowNotification(true);
+
                   const response = await contractCall(
                     contractAddress,
                     currentAccount,
@@ -313,15 +347,16 @@ const MintDevicePage = () => {
                     'registerGroup(string,string,bytes32,bytes32,bytes32,address)',
                     false,
                   );
-
-                  console.log('RESPONSE');
-                  console.log(response);
-                  setStatus('Processing Transaction...');
-                  setShowNotification(true);
-                  setInterval(() => {
-                    setStatus('Group registered and Device minted successfully!');
+                  if (response == 'Execution Complete') {
+                    setStatus('Processing Transaction...');
                     setShowNotification(true);
-                  }, 15000);
+                    setInterval(() => {
+                      setStatus('Group registered and Device minted successfully!');
+                      setShowNotification(true);
+                    }, 15000);
+                  } else {
+                    setStatus('Transaction Failed or Cancelled');
+                  }
                 } else {
                   setStatus('Waiting for Confirmation...');
                   const response = await contractCall(

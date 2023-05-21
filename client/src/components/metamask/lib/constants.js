@@ -1,4 +1,4 @@
-const RIOT_RPC_URL = 'http://192.168.43.141:5000';
+const RIOT_RPC_URL = 'http://192.168.0.144:5000';
 
 const contractAddress = '0xe7c8eE22E1068447f48bC3859B6f2C7bc0D3c485';
 const ABI = [

@@ -29,14 +29,18 @@ export default async function contractCall(
   const inputs = abi.filter((e) => e.type == 'function' && e.name == functionSignature.split('(')[0])[0].inputs;
   const outputs = abi.filter((e) => e.type == 'function' && e.name == functionSignature.split('(')[0])[0].outputs;
   if (params.length > 0) {
-    encodedData = web3.eth.abi.encodeFunctionCall(
-      {
-        name: functionSignature.split('(')[0],
-        type: 'function',
-        inputs,
-      },
-      params,
-    );
+    try {
+      encodedData = web3.eth.abi.encodeFunctionCall(
+        {
+          name: functionSignature.split('(')[0],
+          type: 'function',
+          inputs,
+        },
+        params,
+      );
+    } catch (e) {
+      return 'Invalid Params';
+    }
   } else {
     encodedData = web3.eth.abi.encodeFunctionCall(
       {

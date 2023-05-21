@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 /**
  * @title RiotDeviceNFT
  * @dev ERC721 token contract for Riot devices.
+ * @author Fabian Ferno and Gabriel Antony Xaviour
  */
 contract RiotDeviceNFT is ERC721, ERC721URIStorage {
     address public immutable i_riotContract;

@@ -8,7 +8,7 @@ import "./RiotDeviceNFT.sol";
 /**
  * @title TheRiotProtocol
  * @dev Contract for managing the Riot Protocol and device registration.
- * @author Gabriel Antony Xaviour
+ * @author Fabian Ferno and Gabriel Antony Xaviour
  */
 contract TheRiotProtocol {
     struct Device {
@@ -27,7 +27,6 @@ contract TheRiotProtocol {
 
     mapping(bytes32 => address) private groupRegistered;
     mapping(address => Device) private deviceIdToDevice;
-
     /**
      * @dev Modifier to check if the device is minted.
      * @param _deviceId The device address to check.
@@ -44,19 +43,20 @@ contract TheRiotProtocol {
      * @param _deviceGroupIdHash The device group ID hash.
      * @param _deviceId The device address.
      * @param nftContract The address of the associated NFT contract.
-     * @return newDevice The newly created Device struct.
      */
     function _addDevice(
         bytes32 _firmwareHash,
         bytes32 _deviceDataHash,
         bytes32 _deviceGroupIdHash,
         address _deviceId,
-        address nftContract
-    ) internal returns (Device memory newDevice) {
+        address nftContract,
+        string memory _uri
+    ) internal {
+        require(!isDeviceMinted(_deviceId), "Device already minted.");
         bytes32 sessionSalt = keccak256(
             abi.encodePacked(block.timestamp, block.difficulty, msg.sender)
         );
-        newDevice = Device(
+        Device memory newDevice = Device(
             _firmwareHash,
             _deviceDataHash,
             _deviceGroupIdHash,
@@ -71,7 +71,7 @@ contract TheRiotProtocol {
         IRiotDeviceNFT(nftContract).safeMint(
             uint256(uint160(_deviceId)),
             msg.sender,
-            "" // TODO: Add URI
+            _uri
         );
     }
 
@@ -83,7 +83,6 @@ contract TheRiotProtocol {
      * @param _deviceDataHash The device data hash.
      * @param _deviceGroupIdHash The device group ID hash.
      * @param _deviceId The device address.
-     * @return newDevice The newly created Device struct.
      */
     function registerGroup(
         string memory _name,
@@ -91,25 +90,24 @@ contract TheRiotProtocol {
         bytes32 _firmwareHash,
         bytes32 _deviceDataHash,
         bytes32 _deviceGroupIdHash,
-        address _deviceId
-    ) public returns (Device memory) {
+        address _deviceId,
+        string memory _uri
+    ) public {
         require(
             !isGroupRegistered(_deviceGroupIdHash),
             "Group already registered."
         );
-        RiotDeviceNFT nftContract = (new RiotDeviceNFT){salt: 0}(
-            _name,
-            _symbol
-        );
+        RiotDeviceNFT nftContract = (new RiotDeviceNFT)(_name, _symbol);
         groupRegistered[_deviceGroupIdHash] = address(nftContract);
-        return
-            _addDevice(
-                _firmwareHash,
-                _deviceDataHash,
-                _deviceGroupIdHash,
-                _deviceId,
-                address(nftContract)
-            );
+
+        _addDevice(
+            _firmwareHash,
+            _deviceDataHash,
+            _deviceGroupIdHash,
+            _deviceId,
+            address(nftContract),
+            _uri
+        );
     }
 
     /**
@@ -118,34 +116,32 @@ contract TheRiotProtocol {
      * @param _deviceDataHash The device data hash.
      * @param _deviceGroupIdHash The device group ID hash.
      * @param _deviceId The device address.
-     * @return newDevice The newly created Device struct.
      */
     function mintDevice(
         bytes32 _firmwareHash,
         bytes32 _deviceDataHash,
         bytes32 _deviceGroupIdHash,
-        address _deviceId
-    ) public returns (Device memory) {
+        address _deviceId,
+        string memory _uri
+    ) public {
         require(isGroupRegistered(_deviceGroupIdHash), "Group not registered.");
-        return
-            _addDevice(
-                _firmwareHash,
-                _deviceDataHash,
-                _deviceGroupIdHash,
-                _deviceId,
-                getGroupContract(_deviceGroupIdHash)
-            );
+        _addDevice(
+            _firmwareHash,
+            _deviceDataHash,
+            _deviceGroupIdHash,
+            _deviceId,
+            getGroupContract(_deviceGroupIdHash),
+            _uri
+        );
     }
 
     /**
      * @dev Sets the subscriber address for a device.
      * @param _deviceId The device address.
      * @param _subscriber The new subscriber address.
-     * @return The updated Device struct.
      */
     function setSubscriberAddress(address _deviceId, address _subscriber)
         public
-        returns (Device memory)
     {
         require(
             msg.sender == deviceIdToDevice[_deviceId].subscriber,
@@ -159,7 +155,6 @@ contract TheRiotProtocol {
             abi.encodePacked(block.timestamp, block.difficulty, _subscriber)
         );
         deviceIdToDevice[_deviceId].sessionSalt = newSessionSalt;
-
         IRiotDeviceNFT(deviceIdToDevice[_deviceId].nftContract)
             .safeTransferFrom(
                 msg.sender,
@@ -167,8 +162,19 @@ contract TheRiotProtocol {
                 uint256(uint160(_deviceId)),
                 ""
             );
+    }
 
-        return deviceIdToDevice[_deviceId];
+    /**
+     * @dev Updates the firmware hash for the device.
+     * @param _firmwareHash The new firmware hash.
+     * @param _deviceId The device address.
+     */
+    function updateFirmware(bytes32 _firmwareHash, address _deviceId) public {
+        require(
+            msg.sender == deviceIdToDevice[_deviceId].subscriber,
+            "Unauthorized User"
+        );
+        deviceIdToDevice[_deviceId].firmwareHash = _firmwareHash;
     }
 
     /**
