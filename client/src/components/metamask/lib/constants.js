@@ -1,6 +1,12 @@
 const RIOT_RPC_URL = 'http://192.168.0.144:5000';
 
 const contractAddress = '0xe7c8eE22E1068447f48bC3859B6f2C7bc0D3c485';
+const riotDeviceImages = [
+  'https://bafkreidmkpibpkguvrnzuqgmudacxji4fl6g437wrtb74t5uliqihuhede.ipfs.nftstorage.link/',
+  'https://bafkreibufkhlr6kaq4mhb4tpczbwtzm7jx2q7nrnwed2ndk6klrv6da54u.ipfs.nftstorage.link/',
+  'https://bafybeideoqd4mya6div4c3drz3sfq5kbrp2p6mytcbwh6gpvgvexwf7wl4.ipfs.nftstorage.link/',
+  'https://bafybeice6wite46sx5ztubkuafmxhjmacq6iivhlvl23fokf6ql3mqwc44.ipfs.nftstorage.link/',
+];
 const ABI = [
   {
     inputs: [
@@ -181,4 +187,4 @@ const chains = [
   //   blockExplorer: 'https://blockscout.chiadochain.net/',
   // },
 ];
-export { contractAddress, ABI, chains, RIOT_RPC_URL };
+export { contractAddress, ABI, chains, RIOT_RPC_URL, riotDeviceImages };
