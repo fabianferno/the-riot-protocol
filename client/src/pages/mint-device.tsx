@@ -1,19 +1,32 @@
 import { Default } from 'components/layouts/Default';
-import { Input, Button, Text, Textarea, Flex, Box, Badge, SimpleGrid } from '@chakra-ui/react';
+import {
+  Input,
+  Button,
+  Text,
+  Textarea,
+  Flex,
+  Box,
+  Badge,
+  SimpleGrid,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  CloseButton,
+  SlideFade,
+} from '@chakra-ui/react';
 import { getEllipsisTxt } from 'utils/format';
-
 import React from 'react';
 import crypto from 'crypto';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import contractCall from '../components/metamask/lib/contract-call';
-// import { SDK, Auth, TEMPLATES, Metadata } from '@infura/sdk';
 import { ABI, contractAddress, RIOT_RPC_URL } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 
 const MintDevicePage = () => {
   const { currentAccount } = useSelector((state: any) => state.metamask);
 
+  const [buttonText, setButtonText] = useState('Enter Device Group Id Hash');
   const [firmwareHash, setFirmwareHash] = useState(
     '0x' + crypto.createHash('sha256').update('').digest().toString('hex'),
   );
@@ -24,13 +37,17 @@ const MintDevicePage = () => {
   const [deviceGroupIdHash, setDeviceGroupIdHash] = useState(
     '0x' + crypto.createHash('sha256').update('dg_1').digest().toString('hex'),
   );
-  const [loading, setLoading] = useState(0);
+  const [status, setStatus] = useState('');
   const [systemName, setSystemName] = useState('esp8266');
   const [releaseName, setReleaseName] = useState('2.2.0-dev(9422289)');
   const [firmwareVersion, setFirmwareVersion] = useState('v1.19.1 on 2022-06-18');
   const [chipName, setChipName] = useState('ESP module (1M) with ESP8266');
   const [chipId, setChipId] = useState('42c1dd00');
+  const [showNotification, setShowNotification] = useState(false);
 
+  const closeNotification = () => {
+    setShowNotification(false);
+  };
   async function hashify(contents: any) {
     const response = await fetch(`${RIOT_RPC_URL}/hashify`, {
       method: 'POST',
@@ -48,15 +65,27 @@ const MintDevicePage = () => {
     setDeviceDataHash('0x' + crypto.createHash('sha256').update(deviceData).digest().toString('hex'));
   }
 
-  // useEffect(() => {
-  //   const auth = new Auth({
-  //     projectId: process.env.INFURA_API_KEY,
-  //     secretId: process.env.INFURA_API_KEY_SECRET,
-  //     privateKey: process.env.WALLET_PRIVATE_KEY,
-  //     chainId: 80001,
-  //   });
-  //   const sdk = new SDK(auth);
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      if (deviceGroupIdHash != '') {
+        const isRegistered = await contractCall(
+          contractAddress,
+          currentAccount,
+          ABI,
+          [deviceGroupIdHash],
+          0,
+          'isGroupRegistered(bytes32)',
+          true,
+        );
+
+        if (isRegistered) {
+          setButtonText('Mint Device');
+        } else {
+          setButtonText('Register and Mint Device');
+        }
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     computeDeviceDataHash();
@@ -255,26 +284,92 @@ const MintDevicePage = () => {
               mx={6}
               colorScheme="teal"
               variant="outline"
+              isDisabled={buttonText === 'Enter Device Group Id Hash' || deviceId === ''}
               onClick={async () => {
-                await contractCall(
-                  contractAddress,
-                  currentAccount,
-                  ABI,
-                  [firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId],
-                  0,
-                  'mintDevice(bytes32,bytes32,bytes32,address)',
-                  false,
-                );
-                setLoading(1);
-                setInterval(() => {
-                  setLoading(2);
-                }, 15000);
+                if (buttonText === 'Register and Mint Device') {
+                  setStatus('Registering your group...');
+                  setShowNotification(true);
+                  try {
+                    const response = await fetch('/api/deploy-group', {
+                      method: 'POST',
+                      body: JSON.stringify({ name: 'Riot Association', symbol: 'RA' }),
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                    });
+                    const data = await response.json();
+                    const { address } = data;
+                    console.log(address);
+                  } catch (e) {
+                    console.log(e);
+                  }
+                  setStatus('Waiting for Confirmation...');
+                  const response = await contractCall(
+                    contractAddress,
+                    currentAccount,
+                    ABI,
+                    ['Riot Association', 'RA', firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId],
+                    0,
+                    'registerGroup(string,string,bytes32,bytes32,bytes32,address)',
+                    false,
+                  );
+
+                  console.log('RESPONSE');
+                  console.log(response);
+                  setStatus('Processing Transaction...');
+                  setShowNotification(true);
+                  setInterval(() => {
+                    setStatus('Group registered and Device minted successfully!');
+                    setShowNotification(true);
+                  }, 15000);
+                } else {
+                  setStatus('Waiting for Confirmation...');
+                  const response = await contractCall(
+                    contractAddress,
+                    currentAccount,
+                    ABI,
+                    [firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId],
+                    0,
+                    'mintDevice(bytes32,bytes32,bytes32,address)',
+                    false,
+                  );
+
+                  if (response == 'Execution Complete') {
+                    setStatus('Processing Transaction...');
+                    setShowNotification(true);
+                    setInterval(() => {
+                      setStatus('Device minted successfully!');
+                      setShowNotification(true);
+                    }, 15000);
+                  } else {
+                    setStatus('Transaction Failed or Cancelled');
+                  }
+                }
               }}
             >
-              Mint your Device
+              {buttonText}
             </Button>
           </Flex>
         </form>
+        <SlideFade in={showNotification} offsetY="-20px">
+          <Box position="fixed" bottom={4} right={4} width="300px">
+            <Alert
+              status="success"
+              variant="subtle"
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="space-between"
+              boxShadow="md"
+              borderRadius="md"
+            >
+              <AlertIcon boxSize={4} mr={2} />
+              <AlertTitle mr={2} fontSize="md">
+                {status}
+              </AlertTitle>
+              <CloseButton size="sm" onClick={closeNotification} />
+            </Alert>
+          </Box>
+        </SlideFade>
       </div>
     </Default>
   );

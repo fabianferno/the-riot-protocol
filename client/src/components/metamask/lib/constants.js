@@ -1,280 +1,118 @@
 const RIOT_RPC_URL = 'http://192.168.43.141:5000';
 
-const contractAddress = '0x3BB59Fa798A14A56E6fcDCBb8373d27F5Ec2dbF9';
+const contractAddress = '0xe7c8eE22E1068447f48bC3859B6f2C7bc0D3c485';
 const ABI = [
   {
     inputs: [
+      { internalType: 'bytes32', name: '_firmwareHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceDataHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceGroupIdHash', type: 'bytes32' },
+      { internalType: 'address', name: '_deviceId', type: 'address' },
+    ],
+    name: 'generateRiotKeyForDevice',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '_deviceId', type: 'address' }],
+    name: 'generateRiotKeyForSubscriber',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '_deviceId', type: 'address' }],
+    name: 'getDevice',
+    outputs: [
       {
-        internalType: 'address',
-        name: '_deviceId',
-        type: 'address',
+        components: [
+          { internalType: 'bytes32', name: 'firmwareHash', type: 'bytes32' },
+          { internalType: 'bytes32', name: 'deviceDataHash', type: 'bytes32' },
+          { internalType: 'bytes32', name: 'deviceGroupIdHash', type: 'bytes32' },
+          { internalType: 'address', name: 'deviceId', type: 'address' },
+          { internalType: 'address', name: 'subscriber', type: 'address' },
+          { internalType: 'bytes32', name: 'sessionSalt', type: 'bytes32' },
+          { internalType: 'address', name: 'nftContract', type: 'address' },
+          { internalType: 'bool', name: 'exists', type: 'bool' },
+        ],
+        internalType: 'struct TheRiotProtocol.Device',
+        name: '',
+        type: 'tuple',
       },
     ],
-    name: 'burnDevice',
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getDevicesCount',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'bytes32', name: '_deviceGroupIdHash', type: 'bytes32' }],
+    name: 'getGroupContract',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'bytes32[]', name: 'hashes', type: 'bytes32[]' }],
+    name: 'getMerkleRoot',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'pure',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '_deviceId', type: 'address' }],
+    name: 'isDeviceMinted',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'bytes32', name: '_deviceGroupIdHash', type: 'bytes32' }],
+    name: 'isGroupRegistered',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'bytes32', name: '_firmwareHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceDataHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceGroupIdHash', type: 'bytes32' },
+      { internalType: 'address', name: '_deviceId', type: 'address' },
+    ],
+    name: 'mintDevice',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'bytes32',
-        name: '_firmwareHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_deviceDataHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_deviceGroupIdHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: '_deviceId',
-        type: 'address',
-      },
+      { internalType: 'string', name: '_name', type: 'string' },
+      { internalType: 'string', name: '_symbol', type: 'string' },
+      { internalType: 'bytes32', name: '_firmwareHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceDataHash', type: 'bytes32' },
+      { internalType: 'bytes32', name: '_deviceGroupIdHash', type: 'bytes32' },
+      { internalType: 'address', name: '_deviceId', type: 'address' },
     ],
-    name: 'mintDevice',
-    outputs: [
-      {
-        components: [
-          {
-            internalType: 'bytes32',
-            name: 'firmwareHash',
-            type: 'bytes32',
-          },
-          {
-            internalType: 'bytes32',
-            name: 'deviceDataHash',
-            type: 'bytes32',
-          },
-          {
-            internalType: 'bytes32',
-            name: 'deviceGroupIdHash',
-            type: 'bytes32',
-          },
-          {
-            internalType: 'address',
-            name: 'deviceId',
-            type: 'address',
-          },
-          {
-            internalType: 'address',
-            name: 'subscriber',
-            type: 'address',
-          },
-          {
-            internalType: 'bytes32',
-            name: 'sessionSalt',
-            type: 'bytes32',
-          },
-        ],
-        internalType: 'struct TheRiotProtocol.Device',
-        name: '',
-        type: 'tuple',
-      },
-    ],
+    name: 'registerGroup',
+    outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: '_deviceId',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_subscriber',
-        type: 'address',
-      },
+      { internalType: 'address', name: '_deviceId', type: 'address' },
+      { internalType: 'address', name: '_subscriber', type: 'address' },
     ],
     name: 'setSubscriberAddress',
-    outputs: [
-      {
-        components: [
-          {
-            internalType: 'bytes32',
-            name: 'firmwareHash',
-            type: 'bytes32',
-          },
-          {
-            internalType: 'bytes32',
-            name: 'deviceDataHash',
-            type: 'bytes32',
-          },
-          {
-            internalType: 'bytes32',
-            name: 'deviceGroupIdHash',
-            type: 'bytes32',
-          },
-          {
-            internalType: 'address',
-            name: 'deviceId',
-            type: 'address',
-          },
-          {
-            internalType: 'address',
-            name: 'subscriber',
-            type: 'address',
-          },
-          {
-            internalType: 'bytes32',
-            name: 'sessionSalt',
-            type: 'bytes32',
-          },
-        ],
-        internalType: 'struct TheRiotProtocol.Device',
-        name: '',
-        type: 'tuple',
-      },
-    ],
+    outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'deviceIdToDevice',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: 'firmwareHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'deviceDataHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'deviceGroupIdHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'deviceId',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'subscriber',
-        type: 'address',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'sessionSalt',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'devices',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: '_firmwareHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_deviceDataHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_deviceGroupIdHash',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: '_deviceId',
-        type: 'address',
-      },
-    ],
-    name: 'generateRiotKeyForDevice',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_deviceId',
-        type: 'address',
-      },
-    ],
-    name: 'generateRiotKeyForSubscriber',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32[]',
-        name: 'hashes',
-        type: 'bytes32[]',
-      },
-    ],
-    name: 'getMerkleRoot',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'pure',
     type: 'function',
   },
 ];
