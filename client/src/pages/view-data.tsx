@@ -3,6 +3,7 @@ import { Button, Flex, Box, Text, Input, Progress, Table, Thead, Tbody, Tr, Th, 
 
 import React from 'react';
 const aesjs = require('aes-js');
+import crypto from 'crypto';
 import { useState, useEffect } from 'react';
 import axios from "axios";
 
@@ -61,29 +62,50 @@ const ViewDataPage = () => {
         })();
     }, []);
 
+    function getCipherFromKey(riot_key_hex) {
+        // Convert the hex key string to bytes
+        const riot_key_bytes = Buffer.from(riot_key_hex.substring(2), 'hex');
+        const riotKey = riot_key_bytes.toString('hex');
+        console.log('Recieved Riot Key: ', riotKey);
+        // Create Ciphers
+        const cipher = crypto.createCipheriv('aes-128-ecb', riotKey, '');
+        return cipher;
+    }
+
+    function decryptWithCipher(cipher, encrypted_sensor_value) {
+        // Decrypt the encrypted sensor value
+        let decrypted_sensor_value = cipher.decrypt(encrypted_sensor_value);
+        // Remove the padding from the decrypted sensor value
+        decrypted_sensor_value = decrypted_sensor_value.replace(/\0/g, '');
+        // Convert the decrypted sensor value to string
+        decrypted_sensor_value = decrypted_sensor_value.toString('utf-8');
+        return decrypted_sensor_value;
+    }
+
     async function DecryptData() {
         setLoading(true);
         console.log("Device ID: ", deviceId);
 
-        // const contract_response = await contractCall(
-        //     contractAddress,
-        //     currentAccount,
-        //     ABI,
-        //     [deviceId],
-        //     0,
-        //     'generateRiotKeyForSubscriber(address)',
-        //     false,
-        // );
-        // console.log(contract_response);
-        // const riotKeyHex = "0x" + contract_response.substr(2, 16);
-        const riotKeyHex = "0x2f052ba6c8e962a69b5fc75790ecd504";
+        const riotKeyHex = await contractCall(
+            contractAddress,
+            currentAccount,
+            ABI,
+            [deviceId],
+            0,
+            'generateRiotKeyForSubscriber(address)',
+            true,
+        );
+        console.log("generateRiotKeyForSubscriber: ", riotKeyHex);
         const riotKeyBytes = Buffer.from(riotKeyHex.slice(2), 'hex');
         const subscriberRiotKey = riotKeyBytes.toString('hex');
-        console.log(riotKeyHex, riotKeyBytes, subscriberRiotKey);
+        console.log("Riot Key Hex: ", riotKeyHex);
+        console.log("Riot Key Bytes: ", riotKeyBytes);
+        console.log("Subscriber Riot Key: ", subscriberRiotKey);
+
         setRiotKey(subscriberRiotKey);
         setLoading(false);
 
-        const decrypted_data = data.map((item) => {
+        const decrypted_data = data.map((item: any) => {
             const encryptedBuffer = Buffer.from(item.sensorValue, 'hex');
             console.log("Encrypted Buffer", encryptedBuffer)
             // Create AES ECB cipher

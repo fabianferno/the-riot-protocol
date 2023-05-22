@@ -6,35 +6,30 @@ const NAV_LINKS: ISubNav[] = [
     href: '/mint-device',
   },
   {
-    label: 'Assign Device',
-    href: '/assign-devices',
-  },
-  {
     label: 'View Data',
     href: '/view-data',
+  },
+  {
+    label: 'Manage Device',
+    href: '/',
+    children: [
+      {
+        subLabel: 'Update Device firmware',
+        label: 'Update Firmware',
+        href: '/update-firmware',
+      },
+      {
+        subLabel: 'Assign device to user',
+        label: 'Assign Device',
+        href: '/assign-devices',
+      },
+    ],
   },
   {
     label: 'Transactions',
     href: '/transactions',
   },
-  // {
-  //   label: 'Transfers',
-  //   href: '/transfers',
-  //   children: [
-  //     {
-  //       label: 'ERC20',
-  //       subLabel: 'Get your ERC20 transfers',
-  //       href: '/transfers/erc20',
-  //       logo: 'token',
-  //     },
-  //     {
-  //       label: 'NFT',
-  //       subLabel: 'Get your ERC721 an ERC1155 transfers',
-  //       href: '/transfers/nft',
-  //       logo: 'lazyNft',
-  //     },
-  //   ],
-  // },
+
   // {
   //   label: 'Balances',
   //   href: '/balances',

@@ -13,7 +13,8 @@ dotenv.config();
 // WEB3 CONFIG
 const { contractABI, contractAddress } = require("./constants");
 const web3 = new Web3(
-  "https://polygon-mumbai.g.alchemy.com/v2/1iVNWMQkisa5Q3isadNXKzdfKL1LJGEN"
+  process.env.PROVIDER_URL ||
+    "https://polygon-mumbai.g.alchemy.com/v2/1iVNWMQkisa5Q3isadNXKzdfKL1LJGEN"
 );
 const contract = new web3.eth.Contract(contractABI, contractAddress);
 
@@ -57,7 +58,7 @@ app.post("/generate-riot-key-for-device", async (req, res) => {
         deviceId
       )
       .call();
-    riotKey = "0x" + key.substr(2, 16);
+    riotKey = "0x" + key.substr(2, 32);
     res.status(200).json({
       key: riotKey,
       // key: "0x2f052ba6c8e962a69b5fc75790ecd504",

@@ -47,6 +47,8 @@ const MintDevicePage = () => {
   const closeNotification = () => {
     setShowNotification(false);
   };
+
+
   async function hashify(contents: any) {
     const response = await fetch(`${RIOT_RPC_URL}/hashify`, {
       method: 'POST',

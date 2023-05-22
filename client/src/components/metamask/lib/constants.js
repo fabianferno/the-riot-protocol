@@ -1,12 +1,12 @@
-const RIOT_RPC_URL = 'http://192.168.0.144:5000';
+const RIOT_RPC_URL = 'http://localhost:5000';
 
-const contractAddress = '0x1FA3bd42da66fdC0B343FA723D12b71F926AB948';
 const riotDeviceImages = [
   'https://bafkreidmkpibpkguvrnzuqgmudacxji4fl6g437wrtb74t5uliqihuhede.ipfs.nftstorage.link/',
   'https://bafkreibufkhlr6kaq4mhb4tpczbwtzm7jx2q7nrnwed2ndk6klrv6da54u.ipfs.nftstorage.link/',
   'https://bafybeideoqd4mya6div4c3drz3sfq5kbrp2p6mytcbwh6gpvgvexwf7wl4.ipfs.nftstorage.link/',
   'https://bafybeice6wite46sx5ztubkuafmxhjmacq6iivhlvl23fokf6ql3mqwc44.ipfs.nftstorage.link/',
 ];
+const contractAddress = '0x1FA3bd42da66fdC0B343FA723D12b71F926AB948';
 const ABI = [
   {
     inputs: [

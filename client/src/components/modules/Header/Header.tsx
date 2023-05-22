@@ -1,4 +1,4 @@
-import { Box, Container, Flex, HStack } from '@chakra-ui/react';
+import { Box, Container, Flex, HStack, Text } from '@chakra-ui/react';
 import { ColorModeButton, NavBar } from 'components/elements';
 import ConnectButton from '../../metamask/ConnectButton';
 import Link from 'next/link';
@@ -6,9 +6,13 @@ import Link from 'next/link';
 const Header = () => {
   return (
     <Box borderBottom="1px" borderBottomColor="chakra-border-color">
-      <Container maxW="container.xl" p={'10px'}>
+      <Container my="5" maxW="container.xl" p={'10px'}>
         <Flex align="center" justify="space-between">
-          <Link href="/">Logo here</Link>
+          <Link href="/">
+            <Box rounded={"3xl"} bg={"white"}>
+              <Text fontSize={"2xl"} mx="5" py="1" color={"black"} fontWeight={"bold"}>THE RIOT PROTOCOL</Text>
+            </Box>
+          </Link>
           <NavBar />
           <HStack gap={'10px'}>
             <ConnectButton />
