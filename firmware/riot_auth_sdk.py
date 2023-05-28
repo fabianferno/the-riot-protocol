@@ -4,7 +4,7 @@ import uos
 import urequests  
 import cryptolib 
 
-RIOT_RPC_URL = "http://192.168.1.5:5000" 
+RIOT_RPC_URL = "https://riot-rpc-server.adaptable.app" 
 
 # Helper functions start here
 def hashify(contents):

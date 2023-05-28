@@ -1,4 +1,4 @@
-const RIOT_RPC_URL = 'http://localhost:5000';
+const RIOT_RPC_URL = process.env.RIOT_RPC_URL || 'https://riot-rpc-server.adaptable.app';
 
 const riotDeviceImages = [
   'https://bafkreidmkpibpkguvrnzuqgmudacxji4fl6g437wrtb74t5uliqihuhede.ipfs.nftstorage.link/',
@@ -6,7 +6,7 @@ const riotDeviceImages = [
   'https://bafybeideoqd4mya6div4c3drz3sfq5kbrp2p6mytcbwh6gpvgvexwf7wl4.ipfs.nftstorage.link/',
   'https://bafybeice6wite46sx5ztubkuafmxhjmacq6iivhlvl23fokf6ql3mqwc44.ipfs.nftstorage.link/',
 ];
-const contractAddress = '0x1FA3bd42da66fdC0B343FA723D12b71F926AB948';
+const contractAddress = '0xf04a238705B726Bcb1eeC39d8B7529944376C6c3';
 const ABI = [
   {
     inputs: [
@@ -179,6 +179,15 @@ const chains = [
     rpc: 'https://matic-mumbai.chainstacklabs.com',
     isMainnet: false,
     blockExplorer: 'https://mumbai.polygonscan.com/',
+  },
+  {
+    name: 'Polygon zkEVM Testnet',
+    chainId: 1442,
+    coinName: 'ETH',
+    icon: '/polygon.png',
+    rpc: 'https://rpc.public.zkevm-test.net',
+    isMainnet: false,
+    blockExplorer: 'https://explorer.public.zkevm-test.net',
   },
   {
     name: 'Ganache Testnet',

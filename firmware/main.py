@@ -7,7 +7,7 @@ from ubinascii import hexlify
 
 DEVICE_ID = "0x0cfecb5D359E6C59ABd1d2Aa794F52C15055f451" 
 riot_key_hex  = authenticateDevice(DEVICE_ID) 
-cipher = getCipherFromKey(riot_key_hex)
+cipher = getCipherFromKey(riot_key_hex)  # Use the cipher to encrypt and decrypt data
 
 # IOT LOGIC
 # Initialize Sensor
