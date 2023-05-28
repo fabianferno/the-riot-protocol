@@ -13,8 +13,7 @@ dotenv.config();
 // WEB3 CONFIG
 const { contractABI, contractAddress } = require("./constants");
 const web3 = new Web3(
-  process.env.PROVIDER_URL ||
-    "https://polygon-mumbai.g.alchemy.com/v2/1iVNWMQkisa5Q3isadNXKzdfKL1LJGEN"
+  process.env.PROVIDER_URL || "https://rpc.public.zkevm-test.net"
 );
 const contract = new web3.eth.Contract(contractABI, contractAddress);
 
@@ -127,6 +126,59 @@ app.get("/data", async (req, res) => {
         res.status(500).send("Internal server error");
       }
       res.status(200).json(result);
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/flush", async (req, res) => {
+  try {
+    // Delete all records
+    db.run(`DELETE FROM sensor_data`, (err, result) => {
+      if (err) {
+        console.error(err.message);
+        res.status(500).send("Internal server error");
+      }
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/time-util-midnight-timmestamp", async (req, res) => {
+  try {
+    // Get the current timestamp
+    const endTime = Date.now();
+
+    // Get the timestamp of 12 AM (midnight) of the current day
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    const startTime = currentDate.getTime();
+
+    console.log("Start Time:", startTime);
+    console.log("End Time:", endTime);
+
+    res.status(200).json({
+      startTime,
+      endTime,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/web3-config", async (req, res) => {
+  try {
+    res.status(200).json({
+      contractAddress,
+      contractABI,
+      providerUrl:
+        process.env.PROVIDER_URL || "https://rpc.public.zkevm-test.net",
     });
   } catch (error) {
     console.log(error);
