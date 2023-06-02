@@ -1,58 +1,58 @@
 // SPDX-License-Identifier: MIT
 // Tells the Solidity compiler to compile only from v0.8.13 to v0.9.0
 pragma solidity ^0.8.13;
-
-import "./IRiotDeviceNFT.sol";
-import "./RiotDeviceNFT.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 /**
  * @title TheRiotProtocol
  * @dev Contract for managing the Riot Protocol and device registration.
  * @author Fabian Ferno and Gabriel Antony Xaviour
  */
-contract TheRiotProtocol {
+contract TheRiotProtocol is ERC721, ERC721URIStorage {
+    using Counters for Counters.Counter;
+
     struct Device {
-        // JSON string that includes groupId; metadata; firmware; deviceId; subAddress;
         bytes32 firmwareHash;
         bytes32 deviceDataHash;
         bytes32 deviceGroupIdHash;
-        address deviceId;
+        uint deviceId;
         address subscriber;
         bytes32 sessionSalt;
-        address nftContract;
         bool exists;
     }
 
     uint256 private _deviceCount;
+    Counters.Counter private _tokenIdCounter;
+    mapping(bytes32 => uint) private groupRegistered;
+    mapping(uint => Device) private deviceIdToDevice;
 
-    mapping(bytes32 => address) private groupRegistered;
-    mapping(address => Device) private deviceIdToDevice;
+    constructor() ERC721("Riot Protocol", "RP") {}
+
     /**
      * @dev Modifier to check if the device is minted.
-     * @param _deviceId The device address to check.
+     * @param _deviceId The device token Id to check.
      */
-    modifier checkIfDeviceIsMinted(address _deviceId) {
+    modifier checkIfDeviceIsMinted(uint _deviceId) {
         require(isDeviceMinted(_deviceId), "Device not minted.");
         _;
     }
 
     /**
-     * @dev Internal function to add a new device.
+     * @dev Public function to add a new device.
      * @param _firmwareHash The firmware hash of the device.
      * @param _deviceDataHash The device data hash.
      * @param _deviceGroupIdHash The device group ID hash.
-     * @param _deviceId The device address.
-     * @param nftContract The address of the associated NFT contract.
+     * @param _uri The URI for the token's metadata.
      */
-    function _addDevice(
+    function addDevice(
         bytes32 _firmwareHash,
         bytes32 _deviceDataHash,
         bytes32 _deviceGroupIdHash,
-        address _deviceId,
-        address nftContract,
         string memory _uri
-    ) internal {
-        require(!isDeviceMinted(_deviceId), "Device already minted.");
+    ) public {
+        uint256 _deviceId = _tokenIdCounter.current();
         bytes32 sessionSalt = keccak256(
             abi.encodePacked(block.timestamp, block.difficulty, msg.sender)
         );
@@ -63,86 +63,21 @@ contract TheRiotProtocol {
             _deviceId,
             msg.sender,
             sessionSalt,
-            nftContract,
             true
         );
         deviceIdToDevice[_deviceId] = newDevice;
         _deviceCount += 1;
-        IRiotDeviceNFT(nftContract).safeMint(
-            uint256(uint160(_deviceId)),
-            msg.sender,
-            _uri
-        );
-    }
-
-    /**
-     * @dev Registers a new group and adds a device.
-     * @param _name The name of the Riot Group NFT contract.
-     * @param _symbol The symbol of the Riot Group NFT contract.
-     * @param _firmwareHash The firmware hash of the device.
-     * @param _deviceDataHash The device data hash.
-     * @param _deviceGroupIdHash The device group ID hash.
-     * @param _deviceId The device address.
-     */
-    function registerGroup(
-        string memory _name,
-        string memory _symbol,
-        bytes32 _firmwareHash,
-        bytes32 _deviceDataHash,
-        bytes32 _deviceGroupIdHash,
-        address _deviceId,
-        string memory _uri
-    ) public {
-        require(
-            !isGroupRegistered(_deviceGroupIdHash),
-            "Group already registered."
-        );
-        RiotDeviceNFT nftContract = (new RiotDeviceNFT)(_name, _symbol);
-        groupRegistered[_deviceGroupIdHash] = address(nftContract);
-
-        _addDevice(
-            _firmwareHash,
-            _deviceDataHash,
-            _deviceGroupIdHash,
-            _deviceId,
-            address(nftContract),
-            _uri
-        );
-    }
-
-    /**
-     * @dev Mints a new device and associates it with a group.
-     * @param _firmwareHash The firmware hash of the device.
-     * @param _deviceDataHash The device data hash.
-     * @param _deviceGroupIdHash The device group ID hash.
-     * @param _deviceId The device address.
-     */
-    function mintDevice(
-        bytes32 _firmwareHash,
-        bytes32 _deviceDataHash,
-        bytes32 _deviceGroupIdHash,
-        address _deviceId,
-        string memory _uri
-    ) public {
-        require(isGroupRegistered(_deviceGroupIdHash), "Group not registered.");
-        _addDevice(
-            _firmwareHash,
-            _deviceDataHash,
-            _deviceGroupIdHash,
-            _deviceId,
-            getGroupContract(_deviceGroupIdHash),
-            _uri
-        );
+        _safeMint(msg.sender, _deviceId);
+        _setTokenURI(_deviceId, _uri);
+        _tokenIdCounter.increment();
     }
 
     /**
      * @dev Sets the subscriber address for a device.
-     * @param _deviceId The device address.
+     * @param _deviceId The device Token Id.
      * @param _subscriber The new subscriber address.
      */
-    function setSubscriberAddress(address _deviceId, address _subscriber)
-        public
-    {
+    function setSubscriberAddress(uint _deviceId, address _subscriber) public {
         require(
             msg.sender == deviceIdToDevice[_deviceId].subscriber,
             "Unauthorized User"
@@ -155,13 +90,12 @@ contract TheRiotProtocol {
             abi.encodePacked(block.timestamp, block.difficulty, _subscriber)
         );
         deviceIdToDevice[_deviceId].sessionSalt = newSessionSalt;
-        IRiotDeviceNFT(deviceIdToDevice[_deviceId].nftContract)
-            .safeTransferFrom(
-                msg.sender,
-                _subscriber,
-                uint256(uint160(_deviceId)),
-                ""
-            );
+        safeTransferFrom(
+            msg.sender,
+            _subscriber,
+            uint256(uint160(_deviceId)),
+            ""
+        );
     }
 
     /**
@@ -169,7 +103,7 @@ contract TheRiotProtocol {
      * @param _firmwareHash The new firmware hash.
      * @param _deviceId The device address.
      */
-    function updateFirmware(bytes32 _firmwareHash, address _deviceId) public {
+    function updateFirmware(bytes32 _firmwareHash, uint _deviceId) public {
         require(
             msg.sender == deviceIdToDevice[_deviceId].subscriber,
             "Unauthorized User"
@@ -205,14 +139,14 @@ contract TheRiotProtocol {
      * @param _firmwareHash The firmware hash of the device.
      * @param _deviceDataHash The device data hash.
      * @param _deviceGroupIdHash The device group ID hash.
-     * @param _deviceId The device address.
+     * @param _deviceId The device Token Id.
      * @return The RIOT key for the device.
      */
     function generateRiotKeyForDevice(
         bytes32 _firmwareHash,
         bytes32 _deviceDataHash,
         bytes32 _deviceGroupIdHash,
-        address _deviceId
+        uint _deviceId
     ) public view checkIfDeviceIsMinted(_deviceId) returns (bytes32) {
         // Check if the received data is in the valid devices
         require(
@@ -232,7 +166,7 @@ contract TheRiotProtocol {
         hashes[0] = deviceIdToDevice[_deviceId].firmwareHash;
         hashes[1] = deviceIdToDevice[_deviceId].deviceDataHash;
         hashes[2] = deviceIdToDevice[_deviceId].deviceGroupIdHash;
-        hashes[3] = bytes32(bytes20(_deviceId));
+        hashes[3] = bytes32(_deviceId);
         hashes[4] = bytes32(bytes20(deviceIdToDevice[_deviceId].subscriber));
         hashes[5] = deviceIdToDevice[_deviceId].sessionSalt;
 
@@ -241,10 +175,10 @@ contract TheRiotProtocol {
 
     /**
      * @dev Generates a RIOT key for the subscriber of a device.
-     * @param _deviceId The device address.
+     * @param _deviceId The device Token Id.
      * @return The RIOT key for the subscriber of the device.
      */
-    function generateRiotKeyForSubscriber(address _deviceId)
+    function generateRiotKeyForSubscriber(uint _deviceId)
         public
         view
         checkIfDeviceIsMinted(_deviceId)
@@ -260,7 +194,7 @@ contract TheRiotProtocol {
         hashes[0] = deviceIdToDevice[_deviceId].firmwareHash;
         hashes[1] = deviceIdToDevice[_deviceId].deviceDataHash;
         hashes[2] = deviceIdToDevice[_deviceId].deviceGroupIdHash;
-        hashes[3] = bytes32(bytes20(_deviceId));
+        hashes[3] = bytes32(_deviceId);
         hashes[4] = bytes32(bytes20(msg.sender));
         hashes[5] = deviceIdToDevice[_deviceId].sessionSalt;
         return getMerkleRoot(hashes);
@@ -276,45 +210,60 @@ contract TheRiotProtocol {
 
     /**
      * @dev Returns the Device struct for a given device address.
-     * @param _deviceId The device address.
+     * @param _deviceId The device Token Id.
      * @return The Device struct.
      */
-    function getDevice(address _deviceId) public view returns (Device memory) {
+    function getDevice(uint _deviceId) public view returns (Device memory) {
         return deviceIdToDevice[_deviceId];
     }
 
     /**
      * @dev Returns the associated NFT contract address for a given device group ID hash.
      * @param _deviceGroupIdHash The device group ID hash.
-     * @return The NFT contract address.
+     * @return The Device Token Id.
      */
     function getGroupContract(bytes32 _deviceGroupIdHash)
         public
         view
-        returns (address)
+        returns (uint)
     {
         return groupRegistered[_deviceGroupIdHash];
     }
 
     /**
      * @dev Checks if a device is minted.
-     * @param _deviceId The device address.
+     * @param _deviceId The device token Id.
      * @return A boolean indicating if the device is minted.
      */
-    function isDeviceMinted(address _deviceId) public view returns (bool) {
+    function isDeviceMinted(uint _deviceId) public view returns (bool) {
         return deviceIdToDevice[_deviceId].exists;
     }
 
-    /**
-     * @dev Checks if a device group is registered.
-     * @param _deviceGroupIdHash The device group ID hash.
-     * @return A boolean indicating if the group is registered.
-     */
-    function isGroupRegistered(bytes32 _deviceGroupIdHash)
+    // Overrides
+    // The following functions are overrides required by Solidity.
+
+    function _burn(uint256 tokenId)
+        internal
+        override(ERC721, ERC721URIStorage)
+    {
+        super._burn(tokenId);
+    }
+
+    function tokenURI(uint256 tokenId)
         public
         view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721)
         returns (bool)
     {
-        return groupRegistered[_deviceGroupIdHash] != address(0);
+        return super.supportsInterface(interfaceId);
     }
 }
