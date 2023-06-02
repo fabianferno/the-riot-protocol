@@ -9,7 +9,7 @@ async function getExampleImage(image: string) {
   return r.blob();
 }
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { name, groupId, deviceId, image, deviceDataHash } = req.body;
+  const { name, groupId, deviceId, image, deviceDataHash, systemName, releaseName, chipName, chipId } = req.body;
   console.log(req.body);
   const imageBlob = await getExampleImage(image);
   try {
@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       name: name,
       description: `This is a IoT device NFT collection of the organization ${groupId} and tokenId ${deviceId}. `,
       image: imageBlob,
-      external_url: 'https://the-riot-protocol.vercel.app/',
+      external_url: 'https://the-riot-protocol-devx.vercel.app/',
       attributes: [
         {
           trait_type: 'Device ID',
@@ -31,6 +31,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         {
           trait_type: 'Device Data Hash',
           value: deviceDataHash,
+        },
+        {
+          trait_type: 'System Name',
+          value: systemName,
+        },
+        {
+          trait_type: 'Release Name',
+          value: releaseName,
+        },
+        {
+          trait_type: 'Chip Name',
+          value: chipName,
+        },
+        {
+          trait_type: 'Chip ID',
+          value: chipId,
         },
       ],
     };

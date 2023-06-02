@@ -20,13 +20,29 @@ import crypto from 'crypto';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import contractCall from '../components/metamask/lib/contract-call';
-import { zkEVMABI, zkEVMContractAddress, RIOT_RPC_URL, riotDeviceImages } from 'components/metamask/lib/constants';
+import {
+  zkEVMABI,
+  zkEVMContractAddress,
+  mumbaiABI,
+  mumbaiContractAddress,
+  RIOT_RPC_URL,
+  riotDeviceImages,
+} from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
+import getIsGroupRegistered from 'utils/getIsGroupRegistered';
+import getIsDeviceIdMinted from 'utils/getIsDeviceMinted';
+import getDeviceTokenId from 'utils/getDeviceTokenId';
 
 const MintDevicePage = () => {
-  const { currentAccount } = useSelector((state: any) => state.metamask);
+  const { currentAccount, currentChain } = useSelector((state: any) => state.metamask);
+  const [contractAddress, setContractAddress] = useState(
+    currentChain.chainId == 80001 ? mumbaiContractAddress : zkEVMContractAddress,
+  );
+  const [ABI, setABI] = useState(currentChain.chainId == 80001 ? mumbaiABI : zkEVMABI);
 
-  const [buttonText, setButtonText] = useState('Enter Device Group Id Hash');
+  const [buttonText, setButtonText] = useState(
+    currentChain.chainId == 80001 ? 'Mint Device' : 'Enter Device Group Id Hash',
+  );
   const [firmwareHash, setFirmwareHash] = useState('');
   const [deviceId, setDeviceId] = useState('');
   const [deviceDataHash, setDeviceDataHash] = useState(
@@ -64,52 +80,20 @@ const MintDevicePage = () => {
     const deviceData = systemName + releaseName + firmwareVersion + chipName + chipId;
     setDeviceDataHash('0x' + crypto.createHash('sha256').update(deviceData).digest().toString('hex'));
   }
-  async function getIsGroupRegistered(hash: string) {
-    if (hash != '') {
-      const isRegistered = await contractCall(
-        zkEVMContractAddress,
-        currentAccount,
-        zkEVMABI,
-        [hash],
-        0,
-        'isGroupRegistered(bytes32)',
-        true,
-      );
-
-      if (isRegistered) {
-        setButtonText('Mint Device');
-      } else {
-        setButtonText('Register and Mint Device');
-      }
-    }
-  }
-
-  async function getIsDeviceIdMinted(hash: string) {
-    if (hash != '') {
-      const isDeviceMinted = await contractCall(
-        zkEVMContractAddress,
-        currentAccount,
-        zkEVMABI,
-        [hash],
-        0,
-        'isDeviceMinted(address)',
-        true,
-      );
-      console.log(isDeviceMinted);
-      if (isDeviceMinted == 'Invalid Params') {
-        setButtonText('Invalid Device ID');
-      } else if (isDeviceMinted == true) {
-        setButtonText('Device already minted');
-        setDeviceMinted(true);
-      } else if (isDeviceMinted == false) {
-        await getIsGroupRegistered(deviceGroupIdHash);
-      }
-    }
-  }
 
   useEffect(() => {
     (async () => {
-      await getIsGroupRegistered(deviceGroupIdHash);
+      if (currentChain.chainId != 80001) {
+        console.log('HOW THE FUCK');
+        await getIsGroupRegistered(
+          contractAddress,
+          currentAccount,
+          ABI,
+          deviceGroupIdHash,
+          setButtonText,
+          currentChain.chainId,
+        );
+      } else await getDeviceTokenId(contractAddress, currentAccount, ABI, setDeviceId);
     })();
   }, []);
 
@@ -135,19 +119,29 @@ const MintDevicePage = () => {
           Mint a new device
         </Text>
         <form>
-          <div>
-            <Text mt="20px" mb="8px">
-              Device ID
-            </Text>
-            <Input
-              onChange={async (e) => {
-                setDeviceId(e.target.value);
-                computeDeviceDataHash();
-                await getIsDeviceIdMinted(e.target.value);
-              }}
-              placeholder="Enter the device address"
-            />
-          </div>
+          {currentChain.chainId != 80001 && (
+            <div>
+              <Text mt="20px" mb="8px">
+                Device ID
+              </Text>
+              <Input
+                onChange={async (e) => {
+                  setDeviceId(e.target.value);
+                  computeDeviceDataHash();
+                  await getIsDeviceIdMinted(
+                    contractAddress,
+                    currentAccount,
+                    ABI,
+                    e.target.value,
+                    setButtonText,
+                    setDeviceMinted,
+                    currentChain.chainId,
+                  );
+                }}
+                placeholder="Enter the device address"
+              />
+            </div>
+          )}
           <SimpleGrid columns={2} spacing={2}>
             <div>
               <Text mt="20px" mb="8px">
@@ -172,7 +166,16 @@ const MintDevicePage = () => {
                   let hash = '0x' + crypto.createHash('sha256').update(e.target.value).digest().toString('hex');
                   setDeviceGroupIdHash(hash);
                   computeDeviceDataHash();
-                  await getIsGroupRegistered(hash);
+                  if (currentChain.chainId != 80001) {
+                    await getIsGroupRegistered(
+                      contractAddress,
+                      currentAccount,
+                      ABI,
+                      deviceGroupIdHash,
+                      setButtonText,
+                      currentChain.chainId,
+                    );
+                  }
                 }}
                 defaultValue={'dg_1'}
                 placeholder="Enter the device group ID"
@@ -289,14 +292,25 @@ const MintDevicePage = () => {
               </Box>
             </Flex>
 
-            <Flex my={'2'}>
-              <Box borderWidth="1px" borderRadius="lg" p={2} w={'100%'}>
-                <Text fontWeight="bold">
-                  <Badge colorScheme="red">Device Id</Badge>
-                </Text>
-                <Text fontSize="sm">{getEllipsisTxt(deviceId, 10)}</Text>
-              </Box>
-            </Flex>
+            {currentChain.chainId != 80001 ? (
+              <Flex my={'2'}>
+                <Box borderWidth="1px" borderRadius="lg" p={2} w={'100%'}>
+                  <Text fontWeight="bold">
+                    <Badge colorScheme="red">Device Id</Badge>
+                  </Text>
+                  <Text fontSize="sm">{getEllipsisTxt(deviceId, 10)}</Text>
+                </Box>
+              </Flex>
+            ) : (
+              <Flex my={'2'}>
+                <Box borderWidth="1px" borderRadius="lg" p={2} w={'100%'}>
+                  <Text fontWeight="bold">
+                    <Badge colorScheme="red">Device Id</Badge>
+                  </Text>
+                  <Text fontSize="sm">{deviceId}</Text>
+                </Box>
+              </Flex>
+            )}
           </SimpleGrid>
 
           <Box mt={3} mb={3}>
@@ -329,6 +343,10 @@ const MintDevicePage = () => {
                       name: 'Riot Association',
                       symbol: 'RA',
                       groupId: deviceGroupIdHash,
+                      systemName,
+                      releaseName,
+                      chipName,
+                      chipId,
                       deviceId: deviceId,
                       image: riotDeviceImages[Math.floor(Math.random() * riotDeviceImages.length)],
                       deviceDataHash: deviceDataHash,
@@ -346,37 +364,16 @@ const MintDevicePage = () => {
                 }
                 setStatus('Waiting for Confirmation...');
                 setShowNotification(true);
-                if (buttonText === 'Register and Mint Device') {
+                if (currentChain.chainId == 80001) {
                   const response = await contractCall(
-                    zkEVMContractAddress,
+                    contractAddress,
                     currentAccount,
-                    zkEVMABI,
-                    ['Riot Association', 'RA', firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId, metadataHash],
+                    ABI,
+                    [firmwareHash, deviceDataHash, deviceGroupIdHash, metadataHash],
                     0,
-                    'registerGroup(string,string,bytes32,bytes32,bytes32,address,string)',
+                    'addDevice(bytes32,bytes32,bytes32,string)',
                     false,
                   );
-                  if (response == 'Execution Complete') {
-                    setStatus('Processing Transaction...');
-                    setShowNotification(true);
-                    setInterval(() => {
-                      setStatus('Group registered and Device minted successfully!');
-                      setShowNotification(true);
-                    }, 15000);
-                  } else {
-                    setStatus('Transaction Failed or Cancelled');
-                  }
-                } else {
-                  const response = await contractCall(
-                    zkEVMContractAddress,
-                    currentAccount,
-                    zkEVMABI,
-                    [firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId, metadataHash],
-                    0,
-                    'mintDevice(bytes32,bytes32,bytes32,address,string)',
-                    false,
-                  );
-
                   if (response == 'Execution Complete') {
                     setStatus('Processing Transaction...');
                     setShowNotification(true);
@@ -386,6 +383,57 @@ const MintDevicePage = () => {
                     }, 15000);
                   } else {
                     setStatus('Transaction Failed or Cancelled');
+                  }
+                } else {
+                  if (buttonText === 'Register and Mint Device') {
+                    const response = await contractCall(
+                      contractAddress,
+                      currentAccount,
+                      ABI,
+                      [
+                        'Riot Association',
+                        'RA',
+                        firmwareHash,
+                        deviceDataHash,
+                        deviceGroupIdHash,
+                        deviceId,
+                        metadataHash,
+                      ],
+                      0,
+                      'registerGroup(string,string,bytes32,bytes32,bytes32,address,string)',
+                      false,
+                    );
+                    if (response == 'Execution Complete') {
+                      setStatus('Processing Transaction...');
+                      setShowNotification(true);
+                      setInterval(() => {
+                        setStatus('Group registered and Device minted successfully!');
+                        setShowNotification(true);
+                      }, 15000);
+                    } else {
+                      setStatus('Transaction Failed or Cancelled');
+                    }
+                  } else {
+                    const response = await contractCall(
+                      contractAddress,
+                      currentAccount,
+                      ABI,
+                      [firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId, metadataHash],
+                      0,
+                      'mintDevice(bytes32,bytes32,bytes32,address,string)',
+                      false,
+                    );
+
+                    if (response == 'Execution Complete') {
+                      setStatus('Processing Transaction...');
+                      setShowNotification(true);
+                      setInterval(() => {
+                        setStatus('Device minted successfully!');
+                        setShowNotification(true);
+                      }, 15000);
+                    } else {
+                      setStatus('Transaction Failed or Cancelled');
+                    }
                   }
                 }
               }}
