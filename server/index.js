@@ -47,7 +47,7 @@ app.use(express.json());
 app.post("/generate-riot-key-for-device", async (req, res) => {
   try {
     const { firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId } =
-      req.body;
+      req.body[0];
 
     let key = await contract.methods
       .generateRiotKeyForDevice(

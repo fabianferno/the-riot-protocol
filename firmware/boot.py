@@ -1,8 +1,7 @@
 # boot.py -- run on boot-up
-import network 
+import network
  
 def connectToNetwork():
-    import network
     sta_if = network.WLAN(network.STA_IF)
     if not sta_if.isconnected():
         print('Connecting to Wifi...')
@@ -11,5 +10,5 @@ def connectToNetwork():
         while not sta_if.isconnected():
             pass
     print('Wifi connected:', sta_if.ifconfig())
- 
+
 connectToNetwork()
