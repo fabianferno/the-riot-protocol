@@ -6,7 +6,8 @@ const riotDeviceImages = [
   'https://bafybeideoqd4mya6div4c3drz3sfq5kbrp2p6mytcbwh6gpvgvexwf7wl4.ipfs.nftstorage.link/',
   'https://bafybeice6wite46sx5ztubkuafmxhjmacq6iivhlvl23fokf6ql3mqwc44.ipfs.nftstorage.link/',
 ];
-const contractAddress = '0xf04a238705B726Bcb1eeC39d8B7529944376C6c3';
+const zkEVMContractAddress = '0xf04a238705B726Bcb1eeC39d8B7529944376C6c3';
+const mumbaiContractAddress = '0x1FA3bd42da66fdC0B343FA723D12b71F926AB948';
 const ABI = [
   {
     inputs: [
@@ -135,42 +136,6 @@ const ABI = [
   },
 ];
 const chains = [
-  // {
-  //   name: 'Ethereum Mainnet',
-  //   chainId: 1,
-  //   icon: '/ethereum.png',
-  //   rpc: 'https://mainnet.infura.io/v3/',
-  //   isMainnet: true,
-  //   coinName: 'ETH',
-  //   blockExplorer: 'https://etherscan.io/',
-  // },
-  // {
-  //   name: 'Polygon Mainnet',
-  //   chainId: 137,
-  //   icon: '/polygon.png',
-  //   rpc: 'https://polygon-rpc.com/',
-  //   coinName: 'MATIC',
-  //   isMainnet: true,
-  //   blockExplorer: 'https://polygonscan.com/',
-  // },
-  // {
-  //   name: 'Gnosis Mainnet',
-  //   chainId: 100,
-  //   coinName: 'xDAI',
-  //   icon: '/gnosis.png',
-  //   rpc: 'https://rpc.gnosischain.com',
-  //   isMainnet: true,
-  //   blockExplorer: 'https://gnosisscan.io/',
-  // },
-  // {
-  //   name: 'Goerli Testnet',
-  //   chainId: 5,
-  //   coinName: 'tETH',
-  //   icon: '/ethereum.png',
-  //   rpc: 'https://rpc.ankr.com/eth_goerli',
-  //   isMainnet: false,
-  //   blockExplorer: 'https://goerli.etherscan.io/',
-  // },
   {
     name: 'Mumbai Testnet',
     chainId: 80001,
@@ -189,23 +154,5 @@ const chains = [
     isMainnet: false,
     blockExplorer: 'https://explorer.public.zkevm-test.net',
   },
-  {
-    name: 'Ganache Testnet',
-    chainId: 5777,
-    icon: '/ganache.png',
-    rpc: 'http://192.168.1.7:7545',
-    coinName: 'tETH',
-    isMainnet: false,
-    blockExplorer: '',
-  },
-  // {
-  //   name: 'Chiado Testnet',
-  //   chainId: 10200,
-  //   icon: '/gnosis.png',
-  //   rpc: 'https://rpc.chiado.gnosis.gateway.fm',
-  //   coinName: 'txDAI',
-  //   isMainnet: false,
-  //   blockExplorer: 'https://blockscout.chiadochain.net/',
-  // },
 ];
-export { contractAddress, ABI, chains, RIOT_RPC_URL, riotDeviceImages };
+export { zkEVMContractAddress, mumbaiContractAddress, ABI, chains, RIOT_RPC_URL, riotDeviceImages };

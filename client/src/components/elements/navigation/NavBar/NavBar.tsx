@@ -1,11 +1,11 @@
 import { HStack } from '@chakra-ui/react';
 import { NavItem } from '../NavItem';
-import NAV_LINKS from './paths';
+import getNavLinks from './paths';
 
 const NavBar = () => {
   return (
     <HStack gap={'15px'}>
-      {NAV_LINKS.map((link) => (
+      {getNavLinks().map((link) => (
         <NavItem key={`link-${link.label}`} {...link} />
       ))}
     </HStack>
