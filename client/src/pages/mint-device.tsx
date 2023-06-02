@@ -20,7 +20,7 @@ import crypto from 'crypto';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import contractCall from '../components/metamask/lib/contract-call';
-import { ABI, contractAddress, RIOT_RPC_URL, riotDeviceImages } from 'components/metamask/lib/constants';
+import { zkEVMABI, zkEVMContractAddress, RIOT_RPC_URL, riotDeviceImages } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 
 const MintDevicePage = () => {
@@ -48,7 +48,6 @@ const MintDevicePage = () => {
     setShowNotification(false);
   };
 
-
   async function hashify(contents: any) {
     const response = await fetch(`${RIOT_RPC_URL}/hashify`, {
       method: 'POST',
@@ -68,9 +67,9 @@ const MintDevicePage = () => {
   async function getIsGroupRegistered(hash: string) {
     if (hash != '') {
       const isRegistered = await contractCall(
-        contractAddress,
+        zkEVMContractAddress,
         currentAccount,
-        ABI,
+        zkEVMABI,
         [hash],
         0,
         'isGroupRegistered(bytes32)',
@@ -88,9 +87,9 @@ const MintDevicePage = () => {
   async function getIsDeviceIdMinted(hash: string) {
     if (hash != '') {
       const isDeviceMinted = await contractCall(
-        contractAddress,
+        zkEVMContractAddress,
         currentAccount,
-        ABI,
+        zkEVMABI,
         [hash],
         0,
         'isDeviceMinted(address)',
@@ -349,9 +348,9 @@ const MintDevicePage = () => {
                 setShowNotification(true);
                 if (buttonText === 'Register and Mint Device') {
                   const response = await contractCall(
-                    contractAddress,
+                    zkEVMContractAddress,
                     currentAccount,
-                    ABI,
+                    zkEVMABI,
                     ['Riot Association', 'RA', firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId, metadataHash],
                     0,
                     'registerGroup(string,string,bytes32,bytes32,bytes32,address,string)',
@@ -369,9 +368,9 @@ const MintDevicePage = () => {
                   }
                 } else {
                   const response = await contractCall(
-                    contractAddress,
+                    zkEVMContractAddress,
                     currentAccount,
-                    ABI,
+                    zkEVMABI,
                     [firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId, metadataHash],
                     0,
                     'mintDevice(bytes32,bytes32,bytes32,address,string)',

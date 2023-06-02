@@ -19,7 +19,7 @@ import { ArrowDownIcon } from '@chakra-ui/icons';
 import contractCall from 'components/metamask/lib/contract-call';
 import React from 'react';
 import { useState } from 'react';
-import { ABI, zkEVMContractAddress, RIOT_RPC_URL } from 'components/metamask/lib/constants';
+import { zkEVMABI, zkEVMContractAddress, RIOT_RPC_URL } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 
 const UpdateFirmwarePage = () => {
@@ -128,9 +128,9 @@ const UpdateFirmwarePage = () => {
                 setShowNotification(true);
 
                 let response = await contractCall(
-                  contractAddress,
+                  zkEVMContractAddress,
                   currentAccount,
-                  ABI,
+                  zkEVMABI,
                   [firmwareHash, deviceId],
                   0,
                   'updateFirmware(bytes32,address)',

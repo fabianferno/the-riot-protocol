@@ -18,7 +18,7 @@ import { ArrowDownIcon } from '@chakra-ui/icons';
 import contractCall from 'components/metamask/lib/contract-call';
 import React from 'react';
 import { useState } from 'react';
-import { ABI, contractAddress } from 'components/metamask/lib/constants';
+import { zkEVMABI, zkEVMContractAddress } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 
 const AssignDevicesPage = () => {
@@ -109,9 +109,9 @@ const AssignDevicesPage = () => {
                 setShowNotification(true);
 
                 let response = await contractCall(
-                  contractAddress,
+                  zkEVMContractAddress,
                   currentAccount,
-                  ABI,
+                  zkEVMABI,
                   [deviceId, subscriber],
                   0,
                   'setSubscriberAddress(address,address)',
