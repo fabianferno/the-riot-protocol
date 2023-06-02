@@ -23,8 +23,8 @@ const Home = () => {
 
           <Stack direction={{ base: 'column', md: 'row' }} spacing={8} mb={10}>
             <Box flex="1">
-              <Image src="/stock1.webp" alt="Image 1" rounded="lg" shadow="md" />
-              <Heading as="h3" mt={4} mb={2}>
+              <Image src="/stock1.webp" height={300} width={450} alt="Image 1" rounded="3xl" shadow="lg" />
+              <Heading as="h3" mt={4} fontSize={30} mb={2}>
                 Authentication & Encryption
               </Heading>
               <Text>
@@ -33,8 +33,8 @@ const Home = () => {
             </Box>
 
             <Box flex="1">
-              <Image src="/stock2.webp" alt="Image 2" rounded="lg" shadow="md" />
-              <Heading as="h3" mt={4} mb={2}>
+              <Image src="/stock2.webp" height={300} width={450} alt="Image 2" rounded="3xl" shadow="lg" />
+              <Heading as="h3" fontSize={30} mt={4} mb={2}>
                 Decentralized Key Generation
               </Heading>
               <Text>
@@ -46,7 +46,7 @@ const Home = () => {
 
           <Box textAlign="center" mt={100}>
             <Heading as="h1" mb={4}>
-              Decentralized Security Gateway Platform
+              A decentralized security gateway platform
             </Heading>
             <Text fontSize="xl" textAlign={"justify"}>
               The Internet of Things (IoT) has seen widespread adoption in recent years, connecting numerous devices to the internet. However, current IoT networks are vulnerable to various security threats such as data breaches, unauthorized access, and cyber-attacks. To address these security challenges, we propose the Riot protocol - a comprehensive solution for securing IoT networks by providing device authentication, data encryption, decentralized key generation, scalability, and more with cryptographic wallet-based authentication. This protocol ensures the confidentiality, integrity, and authenticity of the data exchanged between IoT devices (publishers) or users (subscribers). The Riot protocol aims to provide a secure and reliable communication between devices, offering an extensive solution to the challenges of IoT security using blockchain technology.
