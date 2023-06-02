@@ -3,16 +3,20 @@ from binascii import hexlify, unhexlify
 import uos   
 import urequests  
 import cryptolib 
+import json
 
-RIOT_RPC_URL = "https://riot-rpc-server.adaptable.app" 
+# RIOT_RPC_URL = "http://192.168.1.5:5000"
+RIOT_RPC_URL = "https://riot-rpc-server.adaptable.app"
+
 
 # Helper functions start here
 def hashify(contents):
     # Send these token ingredients and get the riot key from the main server
-    response = urequests.post(RIOT_RPC_URL+"/hashify", json={
-        "contents": contents,
-    }, headers={'Content-Type': 'application/json'}) 
-    hash = "0x"+ response.json().get("hash") 
+    payload = json.dumps({
+        "contents": contents
+    })
+    response = urequests.request("POST",RIOT_RPC_URL+"/hashify", headers={'Content-Type': 'application/json'}, data=payload) 
+    hash = "0x"+ response.json().get("hash")  
     return hash
 # Helper functions end here 
 
@@ -68,21 +72,21 @@ def getDeviceGroupIdHash():
     return hashify("dg_1".encode())
 
 def authenticateDevice(deviceId):
-    firmwareHash = getFirmwareHash()
-    print("Firmware hash: ", firmwareHash)  
-    deviceDataHash = getDeviceDataHash()
-    print("Device data hash: ", deviceDataHash) 
-    deviceGroupIdHash = getDeviceGroupIdHash()
-    print("Device group id hash: ", deviceGroupIdHash)
-    print("Device id: ", deviceId) 
-    
-    # Send these token ingredients and get the riot key from the main server
-    response = urequests.post(RIOT_RPC_URL+"/generate-riot-key-for-device", json={
+    print("Authenticating device...") 
+    firmwareHash = getFirmwareHash() 
+    deviceDataHash = getDeviceDataHash() 
+    deviceGroupIdHash = getDeviceGroupIdHash()  
+    payload={
         "firmwareHash": firmwareHash,
         "deviceDataHash" : deviceDataHash, 
         "deviceGroupIdHash": deviceGroupIdHash, 
         "deviceId": deviceId
-    }, headers={'Content-Type': 'application/json'}) 
+    }, 
+    print("Sending token ingredients: ", payload)
+    # Send these token ingredients and get the riot key from the main server
+    response = urequests.request("POST", RIOT_RPC_URL+"/generate-riot-key-for-device", headers={'Content-Type': 'application/json'}, json=payload) 
     key = response.json().get("key") 
     print("Recieved Riot Key: ", key)
+    if(key == None):
+        raise Exception("Invalid Riot Key")
     return key 
