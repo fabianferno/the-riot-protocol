@@ -1,24 +1,23 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { nodeId, accessKey, secretKey } = req.body;
+  const { contractAddress, currentAccount, accessToken } = req.body;
   console.log(req.body);
   try {
-    const authOptions = {
+    const options = {
       method: 'POST',
-      mode: 'no-cors',
       headers: {
         accept: 'application/json',
-        'X-NODE-ID': nodeId,
-        'X-Key-ID': accessKey,
-        'X-Key-Secret': secretKey,
+        'content-type': 'application/json',
+        Authorization: 'Bearer ' + accessToken,
       },
+      body: JSON.stringify({ contractAddress: contractAddress, ownerAddress: currentAccount, disableCount: false }),
     };
-    fetch('https://web3.luniverse.io/v1/auth-token', authOptions)
+    fetch('https://web3.luniverse.io/v1/polygon/mumbai/nft/listNftByOwnerAndContract', options)
       .then((response) => response.json())
       .then((response) => {
-        console.log('RESPONSE!!!!!!! ' + JSON.stringify(response));
-        res.status(200).json({ accessToken: response.access_token });
+        console.log(response);
+        res.status(200).json(response.data.items.map((item: any) => item.tokenId));
       })
       .catch((err) => {
         console.error(err);
@@ -26,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
   } catch (error) {
     // Handle any errors that occur during the deployment process
-    console.error('Error getting access Token:', error);
+    console.error('Error getting data:', error);
     res.status(500).json({ error });
   }
 }

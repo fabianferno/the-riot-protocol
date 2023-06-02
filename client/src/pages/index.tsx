@@ -10,24 +10,7 @@ const HomePage: NextPage = () => {
   const { accessToken } = useSelector((state: any) => state.luniverse);
   const dispatch = useDispatch();
   useEffect(() => {
-    (async function () {
-      try {
-        const response = await fetch('/api/get-auth-token', {
-          method: 'POST',
-          body: JSON.stringify({
-            nodeId: LUNIVERSE_NODE_ID,
-            secretKey: LUNIVERSE_SECRET_KEY,
-            accessKey: LUNIVERSE_ACCESS_KEY,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const data = await response.json();
-        const { accessToken } = data;
-        dispatch(luniverseActions.setAccessToken(accessToken));
-      } catch (e) {}
-    })();
+    (async function () {})();
   }, []);
   return (
     <Default pageName="Home">
