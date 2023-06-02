@@ -11,11 +11,11 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // WEB3 CONFIG
-const { contractABI, contractAddress } = require("./constants");
+const { contractABI, zkEVMContractAddress } = require("./constants");
 const web3 = new Web3(
   process.env.PROVIDER_URL || "https://rpc.public.zkevm-test.net"
 );
-const contract = new web3.eth.Contract(contractABI, contractAddress);
+const contract = new web3.eth.Contract(contractABI, zkEVMContractAddress);
 
 const db = new sqlite3.Database("./database.db", (err) => {
   if (err) {
@@ -175,7 +175,7 @@ app.get("/time-util-midnight-timmestamp", async (req, res) => {
 app.get("/web3-config", async (req, res) => {
   try {
     res.status(200).json({
-      contractAddress,
+      zkEVMContractAddress,
       contractABI,
       providerUrl:
         process.env.PROVIDER_URL || "https://rpc.public.zkevm-test.net",
