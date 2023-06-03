@@ -11,11 +11,14 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // WEB3 CONFIG
-const { contractABI, zkEVMContractAddress } = require("./constants");
-const web3 = new Web3(
-  process.env.PROVIDER_URL || "https://rpc.public.zkevm-test.net"
-);
-const contract = new web3.eth.Contract(contractABI, zkEVMContractAddress);
+const {
+  zkEVMContractAddress,
+  mumbaiContractAddress,
+  zkEVMABI,
+  mumbaiABI,
+  chains,
+} = require("./constants");
+const { getEnabledCategories } = require("trace_events");
 
 const db = new sqlite3.Database("./database.db", (err) => {
   if (err) {
@@ -46,8 +49,18 @@ app.use(express.json());
 
 app.post("/generate-riot-key-for-device", async (req, res) => {
   try {
-    const { firmwareHash, deviceDataHash, deviceGroupIdHash, deviceId } =
-      req.body[0];
+    const {
+      firmwareHash,
+      deviceDataHash,
+      deviceGroupIdHash,
+      deviceId,
+      chainId,
+    } = req.body[0];
+
+    let chain = chains.find((c) => c.chainId === chainId);
+
+    const web3 = new Web3(chain.provider);
+    const contract = new web3.eth.Contract(chain.abi, chain.contract);
 
     let key = await contract.methods
       .generateRiotKeyForDevice(
@@ -176,9 +189,9 @@ app.get("/web3-config", async (req, res) => {
   try {
     res.status(200).json({
       zkEVMContractAddress,
-      contractABI,
-      providerUrl:
-        process.env.PROVIDER_URL || "https://rpc.public.zkevm-test.net",
+      mumbaiContractAddress,
+      zkEVMABI,
+      mumbaiABI,
     });
   } catch (error) {
     console.log(error);

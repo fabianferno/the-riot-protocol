@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { nodeId, accessKey, secretKey } = req.body;
+
+  console.log('Config: ', nodeId, accessKey, secretKey);
   console.log(req.body);
   try {
     const authOptions = {
