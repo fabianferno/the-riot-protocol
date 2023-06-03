@@ -31,7 +31,7 @@ function ChainsModal({ setShowChainModal, setSelectedChain, setNewBalance }) {
                 setShowChainModal();
               }}
             >
-              <Image src={chain.icon} width={20} height={20} className="my-auto" />
+              <Image alt="chain" src={chain.icon} width={20} height={20} className="my-auto" />
 
               <div className=" p-2 text-xs font-semibold my-auto ">{chain.name}</div>
             </button>

@@ -11,6 +11,7 @@ import { chains } from './lib/constants';
 import ChainsModal from './SelectChainModal';
 import getBalance from './lib/getBalance';
 import AccountOptionsModal from './AccountOptionsModal';
+
 export default function ConnectButton() {
   const { currentAccount, currentChain, currentBalance, metamaskMessage } = useSelector((state) => state.metamask);
   const [showAccountOptions, setShowAccountOptions] = useState(false);
@@ -122,14 +123,14 @@ export default function ConnectButton() {
                 setShowChainModal(true);
               }}
             >
-              <Image src={currentChain.icon} width={20} height={20} className="my-auto" />
+              <Image alt="Chain" src={currentChain.icon} width={20} height={20} className="my-auto" />
 
               <div className=" p-2 text-xs font-semibold my-auto ">{currentChain.name}</div>
               <FontAwesomeIcon icon={faChevronDown} width={12} height={12} className="my-auto mr-2" />
             </button>
           ) : (
             currentAccount != '' && (
-              <button className="flex bg-[#D22B2B] rounded-lg">
+              <div className="flex bg-[#D22B2B] rounded-lg">
                 <button
                   className=" p-2 text-xs font-semibold my-auto "
                   onClick={() => {
@@ -139,7 +140,7 @@ export default function ConnectButton() {
                   Wrong Network
                 </button>
                 <FontAwesomeIcon icon={faChevronDown} width={12} height={12} className="my-auto mr-2" />
-              </button>
+              </div>
             )
           )}
           <button
@@ -173,6 +174,7 @@ export default function ConnectButton() {
           >
             <div className="p-2 bg-[#343434] rounded-l-lg transition ease-in-out delay-100 duration-200 group-hover:bg-slate-900 border-y-2 border-l-2">
               <Image
+                alt="Metamask"
                 src={'https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg'}
                 width={16}
                 height={16}
@@ -207,6 +209,7 @@ export default function ConnectButton() {
         >
           <div className="p-2 bg-[#343434] rounded-l-lg transition ease-in-out delay-100 duration-200 group-hover:bg-slate-900 border-y-2 border-l-2">
             <Image
+              alt="Metamask"
               src={'https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg'}
               width={16}
               height={16}
@@ -225,6 +228,7 @@ export default function ConnectButton() {
         >
           <div className="p-2 bg-[#343434] rounded-l-lg transition ease-in-out delay-100 duration-200 group-hover:bg-slate-900 border-y-2 border-l-2">
             <Image
+              alt="Metamask"
               src={'https://raw.githubusercontent.com/MetaMask/brand-resources/master/SVG/metamask-fox.svg'}
               width={16}
               height={16}
