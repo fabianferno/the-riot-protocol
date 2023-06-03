@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { mumbaiContractAddress, riotDeviceImages } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 import Link from 'next/link';
-import { LUNIVERSE_ACCESS_KEY, LUNIVERSE_NODE_ID, LUNIVERSE_SECRET_KEY } from '../constants';
+import { LUNIVERSE_ACCESS_KEY, LUNIVERSE_NODE_ID, LUNIVERSE_SECRET_KEY } from '../../constants';
 import extractIdentifier from 'utils/extractIdentifier';
 import getTimeDifferenceString from 'utils/getTimeDifference';
 

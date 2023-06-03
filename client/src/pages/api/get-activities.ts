@@ -16,36 +16,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     fetch('https://web3.luniverse.io/v1/polygon/mumbai/nft/listNftTransferByContract', options)
       .then((response) => response.json())
       .then((response) => {
-        const returnData = response.data.items.map((item: any) => {
-          console.log(item.to, currentAccount);
-          if (item.to.toLowerCase() === currentAccount.toLowerCase()) {
-            return {
-              type: 'received',
-              tokenId: item.tokenId,
-              fromAddress: item.from,
-              toAddress: item.to,
-              transactionHash: item.transactionHash,
-            };
-          } else if (item.from.toLowerCase() === currentAccount.toLowerCase()) {
-            if (item.from == '0x0000000000000000000000000000000000000000') {
+        console.log(response.data.items);
+        const returnData = response.data.items
+          .filter(
+            (item: any) =>
+              item.to.toLowerCase() === currentAccount.toLowerCase() ||
+              item.from.toLowerCase() === currentAccount.toLowerCase(),
+          )
+          .map((item: any) => {
+            console.log(item.to, currentAccount);
+            if (item.to.toLowerCase() === currentAccount.toLowerCase()) {
+              if (item.from == '0x0000000000000000000000000000000000000000') {
+                return {
+                  type: 'Minted',
+                  tokenId: item.tokenId,
+                  fromAddress: item.from,
+                  toAddress: item.to,
+                  transactionHash: item.transactionHash,
+                  timestamp: item.blockTimestamp,
+                };
+              } else {
+                return {
+                  type: 'Received',
+                  tokenId: item.tokenId,
+                  fromAddress: item.from,
+                  toAddress: item.to,
+                  transactionHash: item.transactionHash,
+                  timestamp: item.blockTimestamp,
+                };
+              }
+            } else if (item.from.toLowerCase() === currentAccount.toLowerCase()) {
               return {
-                type: 'minted',
+                type: 'Sent',
                 tokenId: item.tokenId,
                 fromAddress: item.from,
                 toAddress: item.to,
                 transactionHash: item.transactionHash,
-              };
-            } else {
-              return {
-                type: 'sent',
-                tokenId: item.tokenId,
-                fromAddress: item.from,
-                toAddress: item.to,
-                transactionHash: item.transactionHash,
+                timestamp: item.blockTimestamp,
               };
             }
-          }
-        });
+          });
         console.log(returnData);
 
         res.status(200).json(returnData);
