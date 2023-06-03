@@ -11,14 +11,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'content-type': 'application/json',
         Authorization: 'Bearer ' + accessToken,
       },
-      body: JSON.stringify({ contractAddress: contractAddress, tokenId: tokenId, resync: false }),
+      body: JSON.stringify({ contractAddress: contractAddress, tokenId: tokenId }),
     };
 
-    fetch('https://web3.luniverse.io/v1/polygon/mumbai/nft/getNftMetadataByTokenId', options)
+    fetch('https://web3.luniverse.io/v1/polygon/mumbai/nft/getNftOwnerByTokenId', options)
       .then((response) => response.json())
       .then((response) => {
         console.log(response.data);
-        res.status(200).json(JSON.parse(response.data.rawMetadata));
+        res.status(200).json({ ownerAddress: response.data.ownerAddress });
       })
       .catch((err) => {
         console.error(err);

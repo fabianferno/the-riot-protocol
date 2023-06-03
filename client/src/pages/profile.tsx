@@ -64,9 +64,14 @@ const Profile = () => {
     <Default pageName="Profile">
       <Box p={4}>
         <Stack spacing={4} direction={'column'}>
-          {currentAccount ? <EthAddressResolver address={currentAccount} /> : 'No Account Connected'}
+          {currentAccount ? <EthAddressResolver address={currentAccount} /> : 'anonymous.eth'}
           <div className="flex justify-center ">
-            <div className="p-3 rounded-lg bg-white flex mt-[20px]">
+            <div
+              className="p-3 rounded-lg bg-white flex mt-[20px]"
+              onClick={() => {
+                window.open('https://luniverse.io');
+              }}
+            >
               <Image src="/luniverse.jpg" alt="Luniverse" width={25} height={25} />
               <p className="font-semibold ml-3 text-black text-md">Powered by Luniverse</p>
             </div>
@@ -165,44 +170,12 @@ const Profile = () => {
                         <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">{toAddress}</h1>
                       </div>
 
-                      <p className="my-auto text-xs text-gray-500 ml-[300px]">{getTimeDifferenceString(timestamp)}</p>
+                      <p className="my-auto text-xs text-gray-500 text-end">{getTimeDifferenceString(timestamp)}</p>
                     </div>
                   </div>
                 </div>
               );
             })}
-          {/* <Box>
-            <Box borderRadius={20} p={5} bg={'#111827'} width={'-webkit-fit-content'}>
-              <Heading size="md" mb={3}>
-                Devices Owned
-              </Heading>
-              <List spacing={2}>
-                {userProfile.devicesOwned.map((device) => (
-                  <ListItem key={device.id}>
-                    <Badge colorScheme="blue" variant="subtle" mr={2}>
-                      Device ID: {device.id}
-                    </Badge>
-                    {device.name}
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-            <Box mt={3} borderRadius={20} p={5} bg={'#111827'} width={'-webkit-fit-content'}>
-              <Heading mb={3} size="md">
-                Device Ownership Transfers
-              </Heading>
-              <List spacing={2}>
-                {userProfile.ownershipTransfers.map((transfer) => (
-                  <ListItem key={transfer.id}>
-                    <Badge colorScheme="green" variant="subtle" mr={2}>
-                      Transfer ID: {transfer.id}
-                    </Badge>
-                    {transfer.date}: {transfer.device}
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-          </Box> */}
         </Stack>
       </Box>
     </Default>

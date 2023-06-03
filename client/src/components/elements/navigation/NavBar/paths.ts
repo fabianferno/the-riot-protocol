@@ -11,22 +11,6 @@ export default function getNavLinks() {
           href: '/mint-device',
         },
         {
-          label: 'Statistics',
-          href: '/statistics',
-          children: [
-            {
-              subLabel: 'View Accounts with Active Devices',
-              label: 'Active Users',
-              href: '/update-firmware',
-            },
-            {
-              subLabel: 'View live RioT transactions',
-              label: 'RioT explorer',
-              href: '/assign-devices',
-            },
-          ],
-        },
-        {
           label: 'Your Profile',
           href: '/profile',
         },

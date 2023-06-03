@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Default } from 'components/layouts/Default';
-import { Avatar, Badge, Box, Center, Heading, List, ListItem, Stack, Text } from '@chakra-ui/react';
+import { Box, Center, Table, Tbody, Tr, Td, Stack } from '@chakra-ui/react';
 import Image from 'next/image';
-import { mumbaiContractAddress, riotDeviceImages } from 'components/metamask/lib/constants';
+import { mumbaiContractAddress } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
-import Link from 'next/link';
 import { LUNIVERSE_ACCESS_KEY, LUNIVERSE_NODE_ID, LUNIVERSE_SECRET_KEY } from '../../constants';
-import extractIdentifier from 'utils/extractIdentifier';
 import getTimeDifferenceString from 'utils/getTimeDifference';
+import { useRouter } from 'next/router';
 
 const Profile = () => {
+  const router = useRouter();
+  const { id } = router.query;
   const [selected, setSelected] = useState(0);
-  const [devices, setDevices] = useState([]);
+  const [metadata, setMetadata] = useState({});
   const [activities, setActivities] = useState([]);
-  const [accessToken, setAccessToken] = useState('');
+  const [tokenOwner, setTokenOwner] = useState('');
   const { currentAccount } = useSelector((state: any) => state.metamask);
   useEffect(() => {
     try {
@@ -31,12 +32,11 @@ const Profile = () => {
         response.json().then((data) => {
           console.log(data);
           const accessToken = data.accessToken;
-          setAccessToken(accessToken);
-          fetch('/api/get-devices-by-owner', {
+          fetch('/api/get-nft-metadata', {
             method: 'POST',
             body: JSON.stringify({
               contractAddress: mumbaiContractAddress,
-              currentAccount,
+              tokenId: id,
               accessToken,
             }),
             headers: {
@@ -44,8 +44,43 @@ const Profile = () => {
             },
           }).then((response) => {
             response.json().then((data) => {
+              console.log('NFT METADATA');
               console.log(data);
-              setDevices(data);
+              setMetadata(data);
+            });
+          });
+          fetch('/api/get-nft-owner', {
+            method: 'POST',
+            body: JSON.stringify({
+              contractAddress: mumbaiContractAddress,
+              tokenId: id,
+              accessToken,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }).then((response) => {
+            response.json().then((data) => {
+              console.log('NFT OWNER');
+              console.log(data);
+              setTokenOwner(data.ownerAddress);
+            });
+          });
+          fetch('/api/get-nft-transfers', {
+            method: 'POST',
+            body: JSON.stringify({
+              contractAddress: mumbaiContractAddress,
+              tokenId: id,
+              accessToken,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }).then((response) => {
+            response.json().then((data) => {
+              console.log('NFT TRANSFERS');
+              console.log(data);
+              setActivities(data);
             });
           });
         });
@@ -53,26 +88,31 @@ const Profile = () => {
     } catch (e) {}
   }, []);
   return (
-    <Default pageName="Profile">
+    <Default pageName="Device">
       <Box p={4}>
         <Stack spacing={4} direction={'column'}>
-          <Box>
-            <Center>
-              <Avatar size="2xl" bg={'#111827'} name={'Gabriel Antony'} />
-            </Center>
-            <Center>
-              <Heading mt={3} size="lg" className="mb-2">
-                Gabriel Antony⚡
-              </Heading>
-            </Center>
+          <Center>
+            <Image
+              src={metadata.image != undefined ? 'https://ipfs.io/ipfs/' + metadata.image.slice(7) : '/riot.jpg'}
+              width={150}
+              height={150}
+              alt="NFT Image"
+              className="rounded-lg"
+            />
+          </Center>
+          <div>
+            <h1 className="text-center font-bold text-2xl">RioT #{id}</h1>
+            <p className="text-gray-400 text-md text-center">{metadata.name}</p>
+          </div>
 
-            <Center>
-              <Text>{currentAccount}</Text>
-            </Center>
-          </Box>
           <div className="flex justify-center ">
-            <div className="p-3 rounded-lg bg-white flex mt-[20px]">
-              <Image src="/luniverse.jpg" alt="Luniverse" width={25} height={25}></Image>
+            <div
+              className="p-3 rounded-lg bg-white flex mt-[20px] mb-[10px]"
+              onClick={() => {
+                window.open('https://luniverse.io');
+              }}
+            >
+              <Image src="/luniverse.jpg" alt="Luniverse" width={25} height={25} />
               <p className="font-semibold ml-3 text-black text-md">Powered by Luniverse</p>
             </div>
           </div>
@@ -86,128 +126,63 @@ const Profile = () => {
                   selected == 0 ? 'bg-gray-500' : 'hover:bg-gray-500'
                 } text-white p-2 rounded-md font-semibold `}
               >
-                Devices
+                Device Info
               </button>
 
               <button
                 onClick={() => {
-                  fetch('/api/get-activities', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                      contractAddress: mumbaiContractAddress,
-                      currentAccount,
-                      accessToken,
-                    }),
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                  }).then((response) => {
-                    response.json().then((data) => {
-                      console.log(data);
-                      setActivities(data);
-                    });
-                  });
                   setSelected(1);
                 }}
                 className={`mx-2  ${
                   selected == 1 ? 'bg-gray-500' : 'hover:bg-gray-500'
                 } text-white p-2 rounded-md font-semibold `}
               >
-                Activity
+                Transfers
               </button>
             </div>
           </div>
-          <div className="flex flex-row flex-wrap">
-            {selected == 0 &&
-              devices.length > 0 &&
-              devices.map((device, index) => (
-                <Link href={'/device/' + device} key={index}>
-                  <div
-                    key={index}
-                    className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[180px] text-black mx-2 rounded-md hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
-                  >
-                    <Image
-                      src={extractIdentifier(riotDeviceImages[Math.floor(Math.random() * riotDeviceImages.length)])}
-                      alt="Image"
-                      height={150}
-                      width={150}
-                      className="mx-auto rounded-lg"
-                    />
-                    <h1 className="text-lg font-bold pt-2 pl-4 text-white">RioT #{device}</h1>
-                    <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">Owned</h1>
-                  </div>
-                </Link>
-              ))}
-          </div>
+          {selected == 0 && (
+            <Table variant="simple">
+              <Tbody>
+                {metadata.attributes.map((item, index) => (
+                  <Tr key={index}>
+                    <Td>{item.trait_type}</Td>
+                    <Td>{item.value}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          )}
 
           {selected == 1 &&
-            activities.map(({ type, tokenId, fromAddress, toAddress, transactionHash, timestamp }, index) => {
+            activities.map(({ type, fromAddress, toAddress, transactionHash, timestamp }, index) => {
               return (
                 <div className="flex justify-center w-full">
                   <div
                     key={index}
                     className={`flex justify-start p-3  rounded-lg ${
-                      type == 'Minted' ? 'bg-lime-600' : type == 'Received' ? 'bg-yellow-500' : 'bg-rose-700'
+                      type == 'Minted' ? 'bg-lime-600' : 'bg-yellow-500'
                     } bg-opacity-30 mb-2 ml-6 `}
                     onClick={() => {
                       window.open(`https://mumbai.polygonscan.com/tx/${transactionHash}`);
                     }}
                   >
-                    <Image
-                      src={extractIdentifier(riotDeviceImages[Math.floor(Math.random() * riotDeviceImages.length)])}
-                      alt="Image"
-                      height={150}
-                      width={150}
-                      className=" rounded-lg"
-                    />
                     <div className="">
-                      <h1 className="text-lg font-bold pt-2 pl-4 text-white">
-                        {type}&nbsp;RioT #{tokenId}
-                      </h1>
+                      <h1 className="text-xl text-center font-bold mb-2 px-4 text-white">{type}</h1>
                       <div>
-                        <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">{fromAddress}</h1>
-                        <p className="text-center">⬇️</p>
-                        <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">{toAddress}</h1>
+                        <h1 className="text-md font-semibold text-gray-400 px-4 pb-2">
+                          <span className="font-bold text-gray-500">from ⬅️</span>&nbsp;{fromAddress}
+                        </h1>
+                        <h1 className="text-md font-semibold text-gray-400 px-4 pb-2">
+                          <span className="font-bold text-gray-500">to ➡️</span>&nbsp;{toAddress}
+                        </h1>
                       </div>
-
-                      <p className="my-auto text-xs text-gray-500 ml-[300px]">{getTimeDifferenceString(timestamp)}</p>
+                      <p className="my-auto text-xs text-gray-500 text-end">{getTimeDifferenceString(timestamp)}</p>
                     </div>
                   </div>
                 </div>
               );
             })}
-          {/* <Box>
-            <Box borderRadius={20} p={5} bg={'#111827'} width={'-webkit-fit-content'}>
-              <Heading size="md" mb={3}>
-                Devices Owned
-              </Heading>
-              <List spacing={2}>
-                {userProfile.devicesOwned.map((device) => (
-                  <ListItem key={device.id}>
-                    <Badge colorScheme="blue" variant="subtle" mr={2}>
-                      Device ID: {device.id}
-                    </Badge>
-                    {device.name}
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-            <Box mt={3} borderRadius={20} p={5} bg={'#111827'} width={'-webkit-fit-content'}>
-              <Heading mb={3} size="md">
-                Device Ownership Transfers
-              </Heading>
-              <List spacing={2}>
-                {userProfile.ownershipTransfers.map((transfer) => (
-                  <ListItem key={transfer.id}>
-                    <Badge colorScheme="green" variant="subtle" mr={2}>
-                      Transfer ID: {transfer.id}
-                    </Badge>
-                    {transfer.date}: {transfer.device}
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-          </Box> */}
         </Stack>
       </Box>
     </Default>
