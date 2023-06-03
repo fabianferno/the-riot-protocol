@@ -144,12 +144,13 @@ const Profile = () => {
           {selected == 0 && (
             <Table variant="simple">
               <Tbody>
-                {metadata.attributes.map((item, index) => (
-                  <Tr key={index}>
-                    <Td>{item.trait_type}</Td>
-                    <Td>{item.value}</Td>
-                  </Tr>
-                ))}
+                {metadata.attributes != undefined &&
+                  metadata.attributes.map((item, index) => (
+                    <Tr key={index}>
+                      <Td>{item.trait_type}</Td>
+                      <Td>{item.value}</Td>
+                    </Tr>
+                  ))}
               </Tbody>
             </Table>
           )}
