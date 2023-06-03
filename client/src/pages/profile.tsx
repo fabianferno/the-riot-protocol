@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Default } from 'components/layouts/Default';
-import { Avatar, Badge, Box, Center, Heading, List, ListItem, Stack, Text } from '@chakra-ui/react';
+import { Avatar, Badge, Box, Center, Heading, Stack, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import { mumbaiContractAddress, riotDeviceImages } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 import Link from 'next/link';
-import { LUNIVERSE_ACCESS_KEY, LUNIVERSE_NODE_ID, LUNIVERSE_SECRET_KEY } from '../constants';
 import extractIdentifier from 'utils/extractIdentifier';
+import { nodeId, secretKey, accessKey } from '../utils/luniverse';
+import EthAddressResolver from 'components/modules/EthAddressResolver';
+
+import web3 from 'web3';
+
 
 const Profile = () => {
   const [selected, setSelected] = useState(0);
@@ -14,14 +18,15 @@ const Profile = () => {
   const [activities, setActivities] = useState([]);
   const [accessToken, setAccessToken] = useState('');
   const { currentAccount } = useSelector((state: any) => state.metamask);
+
   useEffect(() => {
     try {
       fetch('/api/get-auth-token', {
         method: 'POST',
         body: JSON.stringify({
-          nodeId: LUNIVERSE_NODE_ID,
-          secretKey: LUNIVERSE_SECRET_KEY,
-          accessKey: LUNIVERSE_ACCESS_KEY,
+          nodeId: process.env.NEXT_PUBLIC_LUNIVERSE_NODE_ID,
+          secretKey: process.env.NEXT_PUBLIC_LUNIVERSE_SECRET_KEY,
+          accessKey: process.env.NEXT_PUBLIC_LUNIVERSE_ACCESS_KEY,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -43,35 +48,26 @@ const Profile = () => {
             },
           }).then((response) => {
             response.json().then((data) => {
-              console.log(data);
+              console.log("Data: ", data);
               setDevices(data);
             });
+          }).catch((err) => {
+            console.log(err);
           });
         });
       });
-    } catch (e) {}
+    } catch (e) { }
   }, []);
   return (
     <Default pageName="Profile">
       <Box p={4}>
         <Stack spacing={4} direction={'column'}>
-          <Box>
-            <Center>
-              <Avatar size="2xl" bg={'#111827'} name={'Gabriel Antony'} />
-            </Center>
-            <Center>
-              <Heading mt={3} size="lg" className="mb-2">
-                Gabriel Antony⚡
-              </Heading>
-            </Center>
-
-            <Center>
-              <Text>{currentAccount}</Text>
-            </Center>
-          </Box>
+          {
+            currentAccount ? <EthAddressResolver address={currentAccount} /> : 'No Account Connected'
+          }
           <div className="flex justify-center ">
             <div className="p-3 rounded-lg bg-white flex mt-[20px]">
-              <Image src="/luniverse.jpg" alt="Luniverse" width={25} height={25}></Image>
+              <Image src="/luniverse.jpg" alt="Luniverse" width={25} height={25} />
               <p className="font-semibold ml-3 text-black text-md">Powered by Luniverse</p>
             </div>
           </div>
@@ -81,9 +77,8 @@ const Profile = () => {
                 onClick={() => {
                   setSelected(0);
                 }}
-                className={`mx-2  ${
-                  selected == 0 ? 'bg-gray-500' : 'hover:bg-gray-500'
-                } text-white p-2 rounded-md font-semibold `}
+                className={`mx-2  ${selected == 0 ? 'bg-gray-500' : 'hover:bg-gray-500'
+                  } text-white p-2 rounded-md font-semibold `}
               >
                 Devices
               </button>
@@ -102,15 +97,14 @@ const Profile = () => {
                     },
                   }).then((response) => {
                     response.json().then((data) => {
-                      console.log(data);
+                      console.log("Activities: ", data);
                       // setDevices(data);
                     });
                   });
                   setSelected(1);
                 }}
-                className={`mx-2  ${
-                  selected == 1 ? 'bg-gray-500' : 'hover:bg-gray-500'
-                } text-white p-2 rounded-md font-semibold `}
+                className={`mx-2  ${selected == 1 ? 'bg-gray-500' : 'hover:bg-gray-500'
+                  } text-white p-2 rounded-md font-semibold `}
               >
                 Activity
               </button>
@@ -119,35 +113,35 @@ const Profile = () => {
           <div className="flex flex-row  flex-wrap">
             {selected == 0
               ? devices.length > 0 &&
-                devices.map((device, index) => (
-                  <Link href={'/device/' + (index + 1)} key={index}>
-                    <div
-                      key={index}
-                      className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[180px] text-black mx-2 rounded-md hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
-                    >
-                      <Image
-                        src={extractIdentifier(riotDeviceImages[Math.floor(Math.random() * riotDeviceImages.length)])}
-                        alt="Image"
-                        height={150}
-                        width={150}
-                        className="mx-auto rounded-lg"
-                      />
-                      <h1 className="text-lg font-bold pt-2 pl-4 text-white">RioT #{device}</h1>
-                      <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">Owned</h1>
-                    </div>
-                  </Link>
-                ))
+              devices.map((device, index) => (
+                <Link href={'/device/' + (index + 1)} key={index}>
+                  <div
+                    key={index}
+                    className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[180px] text-black mx-2 rounded-md hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
+                  >
+                    <Image
+                      src={extractIdentifier(riotDeviceImages[Math.floor(Math.random() * riotDeviceImages.length)])}
+                      alt="Image"
+                      height={150}
+                      width={150}
+                      className="mx-auto rounded-lg"
+                    />
+                    <h1 className="text-lg font-bold pt-2 pl-4 text-white">RioT #{device}</h1>
+                    <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">Owned</h1>
+                  </div>
+                </Link>
+              ))
               : activities.map(({ type, tokenId, fromAddress, toAddress, transactionHash }, index) => {
-                  return (
-                    <div key={index} className="flex justify-start p-3 rounded-lg bg-gray-800 bg-opacity-30 mb-2 ml-6 ">
-                      <Image src={image} alt="Image" height={80} width={80} className=" rounded-lg" />
-                      <div>
-                        <h1 className="text-lg font-bold pt-2 pl-4 text-white">{name}</h1>
-                        <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">{artist}</h1>
-                      </div>
+                return (
+                  <div key={index} className="flex justify-start p-3 rounded-lg bg-gray-800 bg-opacity-30 mb-2 ml-6 ">
+                    <Image src={image} alt="Image" height={80} width={80} className=" rounded-lg" />
+                    <div>
+                      <h1 className="text-lg font-bold pt-2 pl-4 text-white">{name}</h1>
+                      <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">{artist}</h1>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
           </div>
           {/* <Box>
             <Box borderRadius={20} p={5} bg={'#111827'} width={'-webkit-fit-content'}>
@@ -183,7 +177,7 @@ const Profile = () => {
           </Box> */}
         </Stack>
       </Box>
-    </Default>
+    </Default >
   );
 };
 
