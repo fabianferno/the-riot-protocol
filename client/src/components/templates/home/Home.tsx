@@ -1,22 +1,24 @@
 
-import { Heading, VStack, Text, Button, Image, Box, Container, Stack, } from '@chakra-ui/react';
+import { Heading, VStack, Text, Button, Image, Box, Container, Stack, Center } from '@chakra-ui/react';
 import Link from "next/link"
 const Home = () => {
   return (
-    <VStack w={'full'}>
+    <VStack w={'full'} >
       <Box py={5}>
-        <Container maxW="container.lg">
+        <Container maxW="container.lg" >
 
           <Box textAlign="center" mt={20} marginBottom={150}>
+            <Center><Image shadow={"2xl"} marginBottom={10} src={"android-chrome-512x512.png"} alt="riot" height={300} borderRadius={50} /></Center>
             <Heading as="h2" mb={4}>
               Get Started with Riot Protocol
             </Heading>
             <Text fontSize="xl">
               Experience the secure and reliable communication offered by the Riot protocol. Join us today and protect your IoT networks from security threats.
             </Text>
-            <Button colorScheme="blue" size="lg" mt={6}>
-              Sign Up Now
-            </Button>
+            <Link href="/mint-device">
+              <Button size={"lg"} margin={5} >Get started</Button>
+            </Link>
+
           </Box>
 
 
@@ -54,9 +56,6 @@ const Home = () => {
           </Box>
         </Container>
       </Box>
-      <Link href="/mint-device">
-        <Button size={"lg"} margin={5} >Get started</Button>
-      </Link>
 
 
 

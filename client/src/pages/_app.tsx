@@ -1,63 +1,23 @@
-import { ChakraProvider } from '@chakra-ui/react';
-// import { createClient, WagmiConfig } from 'wagmi';
-// import { configureChains } from '@wagmi/core';
-// import {
-//   arbitrum,
-//   arbitrumGoerli,
-//   avalanche,
-//   avalancheFuji,
-//   bsc,
-//   bscTestnet,
-//   fantom,
-//   fantomTestnet,
-//   foundry,
-//   goerli,
-//   mainnet,
-//   optimism,
-//   optimismGoerli,
-//   polygon,
-//   polygonMumbai,
-//   sepolia,
-// } from '@wagmi/core/chains';
-import { extendTheme } from '@chakra-ui/react';
-// import { publicProvider } from 'wagmi/providers/public';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { mode } from '@chakra-ui/theme-tools';
 import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
 import store from '../store/index';
 import '../styles/globals.css';
 
-// const { provider, webSocketProvider } = configureChains(
-//   [
-//     arbitrum,
-//     arbitrumGoerli,
-//     avalanche,
-//     avalancheFuji,
-//     bsc,
-//     bscTestnet,
-//     fantom,
-//     fantomTestnet,
-//     foundry,
-//     goerli,
-//     mainnet,
-//     optimism,
-//     optimismGoerli,
-//     polygon,
-//     polygonMumbai,
-//     sepolia,
-//   ],
-//   [publicProvider()],
-// );
-
-// const client = createClient({
-//   provider,
-//   webSocketProvider,
-//   autoConnect: true,
-// });
-
 const config = {
   initialColorMode: 'dark',
   useSystemColorMode: false,
+  // Change default dark mode bg color
+  styles: {
+    global: (props: any) => ({
+      body: {
+        color: mode('gray.800', 'whiteAlpha.900')(props),
+        bg: mode('gray.100', '#141214')(props),
+      },
+    }),
+  }
 };
 
 const theme = extendTheme({ config });
