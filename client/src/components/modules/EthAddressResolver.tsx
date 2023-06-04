@@ -55,7 +55,7 @@ const EthAddressResolver = ({ address }) => {
             <Heading mt={3} size="lg" className="mb-2">
               {
                 address ? <p>
-                  <strong>{"Resolving ens profile..."}</strong>
+                  <strong>{"Resolving ENS Profile..."}</strong>
                 </p> : 'No Account Connected'
               }
             </Heading>

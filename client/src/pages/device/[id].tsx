@@ -6,6 +6,7 @@ import { mumbaiContractAddress } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 import getTimeDifferenceString from 'utils/getTimeDifference';
 import { useRouter } from 'next/router';
+import UpdateFirmwareModal from 'components/elements/UpdateFirmwareModal';
 
 const Profile = () => {
   const router = useRouter();
@@ -15,6 +16,8 @@ const Profile = () => {
   const [activities, setActivities] = useState([]);
   const [tokenOwner, setTokenOwner] = useState('');
   const { currentAccount } = useSelector((state: any) => state.metamask);
+
+
   useEffect(() => {
     try {
       fetch('/api/get-auth-token', {
@@ -116,7 +119,7 @@ const Profile = () => {
             </div>
           </div>
           <div className="flex justify-center">
-            <div className="  flex">
+            <div className="flex">
               <button
                 onClick={() => {
                   setSelected(0);
@@ -136,6 +139,8 @@ const Profile = () => {
               >
                 Transfers
               </button>
+
+              <UpdateFirmwareModal deviceId={id} />
             </div>
           </div>
           {selected == 0 && (

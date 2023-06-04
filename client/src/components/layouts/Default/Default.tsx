@@ -5,7 +5,7 @@ import Head from 'next/head';
 import { useColorModeValue } from '@chakra-ui/react';
 
 const Default: FC<{ children: ReactNode; pageName: string }> = ({ children, pageName }) => {
-  const bgColor = useColorModeValue('blackAlpha.200', 'black');
+  const bgColor = useColorModeValue('blackAlpha.200', 'blackAlpha.500');
   // const textColor = useColorModeValue("#000000", "#FFFFFF");
 
   return (
