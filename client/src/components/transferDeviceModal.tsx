@@ -19,7 +19,11 @@ import { useSelector } from 'react-redux';
 import { mumbaiABI, mumbaiContractAddress } from './metamask/lib/constants';
 import contractCall from './metamask/lib/contract-call';
 
-const TransferDeviceModal = ({ tokenId, isOpen, onClose }) => {
+const TransferDeviceModal = ({ tokenId, isOpen, onClose }: {
+  tokenId: string;
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
   const { currentAccount } = useSelector((state: any) => state.metamask);
   const [showNotification, setShowNotification] = useState(false);
   const [subscriber, setSubscriber] = useState('');

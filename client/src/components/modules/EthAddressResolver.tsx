@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { providers } from 'ethers';
 import { Avatar, Box, Center, Heading, Text } from '@chakra-ui/react';
 
-const EthAddressResolver = ({ address }) => {
+const EthAddressResolver = ({ address }: {
+  address: string;
+}) => {
   const [ensDomain, setEnsDomain] = useState(null);
 
 
@@ -12,7 +14,7 @@ const EthAddressResolver = ({ address }) => {
         const provider = new providers.JsonRpcProvider("https://eth-mainnet.g.alchemy.com/v2/OkO6gyf9gmK_AMpePLa1NUjAZYWPvzNO"); // Replace with your own provider
         console.log("Provider: ", provider);
 
-        let domain = await provider.lookupAddress(address);
+        let domain: any = await provider.lookupAddress(address);
         console.log("Domain: ", domain);
 
         setEnsDomain(domain || 'No ENS domain found');

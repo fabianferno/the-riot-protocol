@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   console.log('Config: ', nodeId, accessKey, secretKey);
   console.log(req.body);
   try {
-    const authOptions = {
+    const authOptions: any = {
       method: 'POST',
       mode: 'no-cors',
       headers: {

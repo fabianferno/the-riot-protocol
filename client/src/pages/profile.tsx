@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Default } from 'components/layouts/Default';
-import { Avatar, Badge, Box, Center, Heading, Stack, Text } from '@chakra-ui/react';
+import { Box, Stack, } from '@chakra-ui/react';
 import Image from 'next/image';
 import { mumbaiContractAddress, riotDeviceImages } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 import Link from 'next/link';
 import extractIdentifier from 'utils/extractIdentifier';
 import getTimeDifferenceString from 'utils/getTimeDifference';
-import { nodeId, secretKey, accessKey } from '../utils/luniverse';
 import EthAddressResolver from 'components/modules/EthAddressResolver';
 
 import web3 from 'web3';
@@ -20,7 +19,9 @@ const Profile = () => {
   const [accessToken, setAccessToken] = useState('');
   const [openSendDeviceModal, setOpenSendDeviceModal] = useState(false);
   const { currentAccount } = useSelector((state: any) => state.metamask);
-  const [transferTokenId, setTransferTokenId] = useState(-1);
+  const [transferTokenId, setTransferTokenId] = useState("-1");
+
+
   useEffect(() => {
     try {
       fetch('/api/get-auth-token', {

@@ -8,6 +8,7 @@ async function getExampleImage(image: string) {
   }
   return r.blob();
 }
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { name, groupId, deviceId, image, deviceDataHash, systemName, releaseName, chipName, chipId } = req.body;
   console.log(req.body);

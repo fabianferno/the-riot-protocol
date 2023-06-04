@@ -2,13 +2,13 @@ import contractCall from '../components/metamask/lib/contract-call';
 import getIsGroupRegistered from './getIsGroupRegistered';
 
 async function getIsDeviceIdMinted(
-  contractAddress,
-  currentAccount,
-  ABI,
-  hash,
-  setButtonText,
-  setDeviceMinted,
-  chainId,
+  contractAddress: any,
+  currentAccount: any,
+  ABI: any,
+  hash: any,
+  setButtonText: any,
+  setDeviceMinted: any,
+  chainId: any,
 ) {
   if (hash != '') {
     const isDeviceMinted = await contractCall(
@@ -27,7 +27,7 @@ async function getIsDeviceIdMinted(
       setButtonText('Device already minted');
       setDeviceMinted(true);
     } else if (isDeviceMinted == false) {
-      await getIsGroupRegistered(contractAddress, currentAccount, ABI, hash, setButtonText);
+      await getIsGroupRegistered(contractAddress, currentAccount, ABI, hash, setButtonText, chainId);
     }
   }
 }

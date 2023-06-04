@@ -1,6 +1,13 @@
 import contractCall from '../components/metamask/lib/contract-call';
 
-async function getIsGroupRegistered(contractAddress, currentAccount, ABI, hash, setButtonText, chainId) {
+async function getIsGroupRegistered(
+  contractAddress: any,
+  currentAccount: any,
+  ABI: any,
+  hash: any,
+  setButtonText: any,
+  chainId: any,
+) {
   console.log('CHAIN ID!!!!', chainId);
   if (chainId == 80001) return;
   if (hash != '') {

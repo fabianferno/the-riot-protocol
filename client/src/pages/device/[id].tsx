@@ -8,11 +8,22 @@ import getTimeDifferenceString from 'utils/getTimeDifference';
 import { useRouter } from 'next/router';
 import UpdateFirmwareModal from 'components/elements/UpdateFirmwareModal';
 
+type Metadata = {
+  name: string;
+  description: string;
+  image: string;
+  attributes: Array<{
+    trait_type: string;
+    value: string;
+  }>;
+};
+
+
 const Profile = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = router.query as { id: string };
   const [selected, setSelected] = useState(0);
-  const [metadata, setMetadata] = useState({});
+  const [metadata, setMetadata] = useState<Metadata>({} as Metadata);
   const [activities, setActivities] = useState([]);
   const [tokenOwner, setTokenOwner] = useState('');
   const { currentAccount } = useSelector((state: any) => state.metamask);

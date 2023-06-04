@@ -11,7 +11,14 @@ import contractCall from '../components/metamask/lib/contract-call';
 import { zkEVMABI, RIOT_RPC_URL, zkEVMContractAddress } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 
-const DatabaseTable = ({ data }) => {
+const DatabaseTable = ({ data }: {
+  data: {
+    id: number;
+    deviceId: string;
+    created_at: string;
+    sensorValue: number;
+  }[];
+}) => {
   return (
     <Table variant="simple">
       <Thead>
@@ -38,7 +45,7 @@ const DatabaseTable = ({ data }) => {
 
 const ViewDataPage = () => {
   const [riotKey, setRiotKey] = useState('');
-  const [data, setData] = useState({});
+  const [data, setData] = useState<any>({});
   const [loading, setLoading] = useState(true);
 
   const [deviceId, setDeviceId] = useState('');
@@ -62,7 +69,7 @@ const ViewDataPage = () => {
     })();
   }, []);
 
-  function getCipherFromKey(riot_key_hex) {
+  function getCipherFromKey(riot_key_hex: string) {
     // Convert the hex key string to bytes
     const riot_key_bytes = Buffer.from(riot_key_hex.substring(2), 'hex');
     const riotKey = riot_key_bytes.toString('hex');
@@ -72,7 +79,7 @@ const ViewDataPage = () => {
     return cipher;
   }
 
-  function decryptWithCipher(cipher, encrypted_sensor_value) {
+  function decryptWithCipher(cipher: any, encrypted_sensor_value: string) {
     // Decrypt the encrypted sensor value
     let decrypted_sensor_value = cipher.decrypt(encrypted_sensor_value);
     // Remove the padding from the decrypted sensor value

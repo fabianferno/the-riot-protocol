@@ -4,7 +4,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { contractAddress, tokenId, accessToken } = req.body;
   console.log(req.body);
   try {
-    const options = {
+    const options: any = {
       method: 'POST',
       headers: {
         accept: 'application/json',
