@@ -5,7 +5,7 @@ import urequests
 import cryptolib 
 import json
 
-# RIOT_RPC_URL = "http://192.168.1.5:5000"
+# RIOT_RPC_URL = "http://192.168.1.2:5000"
 RIOT_RPC_URL = "https://riot-rpc-server.adaptable.app"
 
 
@@ -80,7 +80,8 @@ def authenticateDevice(deviceId):
         "firmwareHash": firmwareHash,
         "deviceDataHash" : deviceDataHash, 
         "deviceGroupIdHash": deviceGroupIdHash, 
-        "deviceId": deviceId
+        "deviceId": deviceId,
+        "chainId": "1442",
     }, 
     print("Sending token ingredients: ", payload)
     # Send these token ingredients and get the riot key from the main server

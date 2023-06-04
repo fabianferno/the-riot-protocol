@@ -60,7 +60,7 @@ const Profile = () => {
             });
         });
       });
-    } catch (e) {}
+    } catch (e) { }
   }, []);
   return (
     <Default pageName="Profile">
@@ -78,15 +78,14 @@ const Profile = () => {
               <p className="font-semibold ml-3 text-black text-md">Powered by Luniverse</p>
             </div>
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-24">
             <div className="  flex">
               <button
                 onClick={() => {
                   setSelected(0);
                 }}
-                className={`mx-2  ${
-                  selected == 0 ? 'bg-gray-500' : 'hover:bg-gray-500'
-                } text-white p-2 rounded-md font-semibold `}
+                className={`mx-2  ${selected == 0 ? 'bg-gray-500' : 'hover:bg-gray-500'
+                  } text-white p-2 rounded-md font-semibold `}
               >
                 Devices
               </button>
@@ -111,9 +110,8 @@ const Profile = () => {
                   });
                   setSelected(1);
                 }}
-                className={`mx-2  ${
-                  selected == 1 ? 'bg-gray-500' : 'hover:bg-gray-500'
-                } text-white p-2 rounded-md font-semibold `}
+                className={`mx-2  ${selected == 1 ? 'bg-gray-500' : 'hover:bg-gray-500'
+                  } text-white p-2 rounded-md font-semibold `}
               >
                 Activity
               </button>
@@ -125,7 +123,7 @@ const Profile = () => {
               devices.map((device, index) => (
                 <div
                   key={index}
-                  className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[180px] text-black mx-2 rounded-md hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
+                  className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[220px] text-black mx-2 rounded-xl hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
                 >
                   <Link href={'/device/' + device} key={index}>
                     <Image
@@ -133,7 +131,7 @@ const Profile = () => {
                       alt="Image"
                       height={150}
                       width={150}
-                      className="mx-auto rounded-lg"
+                      className=" mx-auto my-auto rounded-lg object-cover"
                     />
                   </Link>
 
@@ -144,13 +142,13 @@ const Profile = () => {
                     </div>
                     <div className="flex flex-col justify-center">
                       <button
-                        className="my-auto rounded-lg bg-yellow-500 p-2 mr-2 text-white font-lg font-semibold"
+                        className="my-auto rounded-lg bg-indigo-500 p-2 mr-2 text-white font-lg font-semibold"
                         onClick={() => {
                           setOpenSendDeviceModal(true);
                           setTransferTokenId(device);
                         }}
                       >
-                        Send
+                        Transfer
                       </button>
                     </div>
                   </div>
@@ -164,9 +162,8 @@ const Profile = () => {
                 <div className="flex justify-center w-full">
                   <div
                     key={index}
-                    className={`flex justify-start p-3  rounded-lg ${
-                      type == 'Minted' ? 'bg-lime-600' : type == 'Received' ? 'bg-yellow-500' : 'bg-rose-700'
-                    } bg-opacity-30 mb-2 ml-6 `}
+                    className={`flex justify-start p-3  rounded-lg ${type == 'Minted' ? 'bg-lime-600' : type == 'Received' ? 'bg-yellow-500' : 'bg-rose-700'
+                      } bg-opacity-30 mb-2 ml-6 `}
                     onClick={() => {
                       window.open(`https://mumbai.polygonscan.com/tx/${transactionHash}`);
                     }}

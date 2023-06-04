@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import contractCall from '../components/metamask/lib/contract-call';
-import { ABI, RIOT_RPC_URL, zkEVMContractAddress } from 'components/metamask/lib/constants';
+import { zkEVMABI, RIOT_RPC_URL, zkEVMContractAddress } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 
 const DatabaseTable = ({ data }) => {
@@ -89,7 +89,7 @@ const ViewDataPage = () => {
     const riotKeyHex = await contractCall(
       zkEVMContractAddress,
       currentAccount,
-      ABI,
+      zkEVMABI,
       [deviceId],
       0,
       'generateRiotKeyForSubscriber(address)',

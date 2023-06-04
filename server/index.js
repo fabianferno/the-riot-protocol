@@ -57,9 +57,9 @@ app.post("/generate-riot-key-for-device", async (req, res) => {
       chainId,
     } = req.body[0];
 
-    let chain = chains.find((c) => c.chainId === chainId);
+    let chain = chains.filter((c) => c.chainId === parseInt(chainId))[0];
 
-    const web3 = new Web3(chain.provider);
+    const web3 = new Web3(chain.rpc);
     const contract = new web3.eth.Contract(chain.abi, chain.contract);
 
     let key = await contract.methods

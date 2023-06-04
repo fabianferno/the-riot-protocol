@@ -1,9 +1,8 @@
 const RIOT_RPC_URL = process.env.RIOT_RPC_URL || 'https://riot-rpc-server.adaptable.app';
 
 const riotDeviceImages = [
-  'https://bafkreidmkpibpkguvrnzuqgmudacxji4fl6g437wrtb74t5uliqihuhede.ipfs.nftstorage.link/',
-  'https://bafkreibufkhlr6kaq4mhb4tpczbwtzm7jx2q7nrnwed2ndk6klrv6da54u.ipfs.nftstorage.link/',
-  'https://bafybeideoqd4mya6div4c3drz3sfq5kbrp2p6mytcbwh6gpvgvexwf7wl4.ipfs.nftstorage.link/',
+  // 'https://bafkreidmkpibpkguvrnzuqgmudacxji4fl6g437wrtb74t5uliqihuhede.ipfs.nftstorage.link/',
+  // 'https://bafkreibufkhlr6kaq4mhb4tpczbwtzm7jx2q7nrnwed2ndk6klrv6da54u.ipfs.nftstorage.link/',
   'https://bafybeice6wite46sx5ztubkuafmxhjmacq6iivhlvl23fokf6ql3mqwc44.ipfs.nftstorage.link/',
 ];
 const zkEVMContractAddress = '0xf04a238705B726Bcb1eeC39d8B7529944376C6c3';

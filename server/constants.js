@@ -451,7 +451,8 @@ const chains = [
     contract: zkEVMContractAddress,
   },
 ];
-export {
+
+module.exports = {
   zkEVMContractAddress,
   mumbaiContractAddress,
   zkEVMABI,

@@ -10,7 +10,7 @@ const Header = () => {
         <Flex align="center" justify="space-between">
           <Link href="/">
             <Box rounded={"3xl"} bg={"white"}>
-              <Text fontSize={"2xl"} mx="5" py="1" color={"black"} fontWeight={"bold"}>THE RIOT PROTOCOL</Text>
+              <Text fontSize={"3xl"} mx="5" py="1" color={"black"} fontWeight={"bold"}>the-riot-protocol</Text>
             </Box>
           </Link>
           <NavBar />
