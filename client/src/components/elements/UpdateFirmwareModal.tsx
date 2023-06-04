@@ -24,12 +24,14 @@ import { ArrowDownIcon } from '@chakra-ui/icons';
 import contractCall from 'components/metamask/lib/contract-call';
 import React from 'react';
 import { useState } from 'react';
-import { zkEVMABI, zkEVMContractAddress, RIOT_RPC_URL } from 'components/metamask/lib/constants';
+import { mumbaiABI, mumbaiContractAddress, RIOT_RPC_URL } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
 
-const UpdateFirmwareModal = ({
-    deviceId,
-}) => {
+const UpdateFirmwareModal = (
+    props: {
+        deviceId: string;
+    }
+) => {
     const [firmwareHash, setFirmwareHash] = useState('0x0000000000000000000000000000000000000000 ');
     const { currentAccount } = useSelector((state: any) => state.metamask);
     const [loading, setLoading] = useState(0);
@@ -53,12 +55,9 @@ const UpdateFirmwareModal = ({
 
     return (
         < div >
-            <Text fontSize="3xl" fontWeight="bold" mb="20px">
-                Apply firmware updates to devices
-            </Text>
             <form>
                 <div>
-                    <Text mt="20px" mb="8px">
+                    <Text mb="8px">
                         Firmware
                     </Text>
                     <Textarea
@@ -87,7 +86,7 @@ const UpdateFirmwareModal = ({
                             <Text fontWeight="bold">
                                 <Badge colorScheme="red">Device Id</Badge>
                             </Text>
-                            <Text fontSize="sm">{deviceId}</Text>
+                            <Text fontSize="sm">{props.deviceId}</Text>
                         </Box>
                     </Flex>
                     <Flex>
@@ -113,16 +112,16 @@ const UpdateFirmwareModal = ({
                     <Button
                         colorScheme="teal"
                         variant="outline"
-                        isDisabled={deviceId === '' || firmwareHash == ''}
+                        isDisabled={props.deviceId === '' || firmwareHash == ''}
                         onClick={async () => {
                             setStatus('Waiting for Confirmation...');
                             setShowNotification(true);
 
                             let response = await contractCall(
-                                zkEVMContractAddress,
+                                mumbaiContractAddress,
                                 currentAccount,
-                                zkEVMABI,
-                                [firmwareHash, deviceId],
+                                mumbaiABI,
+                                [firmwareHash, props.deviceId],
                                 0,
                                 'updateFirmware(bytes32,address)',
                                 false,
@@ -182,8 +181,8 @@ const FirmwareUpdateButton = (
             <Button onClick={onOpen}>Update Firmware</Button>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Update Firmware</ModalHeader>
+                <ModalContent minWidth={"2xl"}>
+                    <ModalHeader>Update Device Firmware</ModalHeader>
                     <ModalBody>
                         <UpdateFirmwareModal deviceId={props.deviceId} />
                     </ModalBody>
