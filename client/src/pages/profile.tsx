@@ -11,14 +11,16 @@ import { nodeId, secretKey, accessKey } from '../utils/luniverse';
 import EthAddressResolver from 'components/modules/EthAddressResolver';
 
 import web3 from 'web3';
+import TransferDeviceModal from 'components/transferDeviceModal';
 
 const Profile = () => {
   const [selected, setSelected] = useState(0);
   const [devices, setDevices] = useState([]);
   const [activities, setActivities] = useState([]);
   const [accessToken, setAccessToken] = useState('');
+  const [openSendDeviceModal, setOpenSendDeviceModal] = useState(false);
   const { currentAccount } = useSelector((state: any) => state.metamask);
-
+  const [transferTokenId, setTransferTokenId] = useState(-1);
   useEffect(() => {
     try {
       fetch('/api/get-auth-token', {
@@ -121,11 +123,11 @@ const Profile = () => {
             {selected == 0 &&
               devices.length > 0 &&
               devices.map((device, index) => (
-                <Link href={'/device/' + device} key={index}>
-                  <div
-                    key={index}
-                    className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[180px] text-black mx-2 rounded-md hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
-                  >
+                <div
+                  key={index}
+                  className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[180px] text-black mx-2 rounded-md hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
+                >
+                  <Link href={'/device/' + device} key={index}>
                     <Image
                       src={extractIdentifier(riotDeviceImages[Math.floor(Math.random() * riotDeviceImages.length)])}
                       alt="Image"
@@ -133,10 +135,26 @@ const Profile = () => {
                       width={150}
                       className="mx-auto rounded-lg"
                     />
-                    <h1 className="text-lg font-bold pt-2 pl-4 text-white">RioT #{device}</h1>
-                    <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">Owned</h1>
+                  </Link>
+
+                  <div className="flex justify-between">
+                    <div>
+                      <h1 className="text-lg font-bold pt-2 pl-4 text-white">RioT #{device}</h1>
+                      <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">Owned</h1>
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <button
+                        className="my-auto rounded-lg bg-yellow-500 p-2 mr-2 text-white font-lg font-semibold"
+                        onClick={() => {
+                          setOpenSendDeviceModal(true);
+                          setTransferTokenId(device);
+                        }}
+                      >
+                        Send
+                      </button>
+                    </div>
                   </div>
-                </Link>
+                </div>
               ))}
           </div>
 
@@ -178,6 +196,13 @@ const Profile = () => {
             })}
         </Stack>
       </Box>
+      <TransferDeviceModal
+        tokenId={transferTokenId}
+        isOpen={openSendDeviceModal}
+        onClose={() => {
+          setOpenSendDeviceModal(false);
+        }}
+      />
     </Default>
   );
 };
