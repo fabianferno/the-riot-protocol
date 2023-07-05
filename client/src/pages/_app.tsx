@@ -5,6 +5,7 @@ import type { AppProps } from 'next/app';
 import { Provider } from 'react-redux';
 import store from '../store/index';
 import '../styles/globals.css';
+import customTheme from '../styles/theme';
 
 const config = {
   initialColorMode: 'dark',
@@ -17,14 +18,12 @@ const config = {
         bg: mode('gray.100', '#141214')(props),
       },
     }),
-  }
+  },
 };
-
-const theme = extendTheme({ config });
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
-    <ChakraProvider resetCSS theme={theme}>
+    <ChakraProvider resetCSS theme={customTheme}>
       <Provider store={store}>
         <SessionProvider session={pageProps.session} refetchInterval={0}>
           <Component {...pageProps} />
