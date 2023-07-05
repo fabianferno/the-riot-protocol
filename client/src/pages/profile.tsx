@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Default } from 'components/layouts/Default';
-import { Box, Stack, } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 import Image from 'next/image';
 import { mumbaiContractAddress, riotDeviceImages } from 'components/metamask/lib/constants';
 import { useSelector } from 'react-redux';
@@ -8,7 +8,21 @@ import Link from 'next/link';
 import extractIdentifier from 'utils/extractIdentifier';
 import getTimeDifferenceString from 'utils/getTimeDifference';
 import EthAddressResolver from 'components/modules/EthAddressResolver';
-
+import {
+  Input,
+  Button,
+  Text,
+  Flex,
+  Badge,
+  Center,
+  SimpleGrid,
+  SlideFade,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  CloseButton,
+} from '@chakra-ui/react';
+import { ArrowDownIcon } from '@chakra-ui/icons';
 import web3 from 'web3';
 import TransferDeviceModal from 'components/transferDeviceModal';
 
@@ -19,8 +33,7 @@ const Profile = () => {
   const [accessToken, setAccessToken] = useState('');
   const [openSendDeviceModal, setOpenSendDeviceModal] = useState(false);
   const { currentAccount } = useSelector((state: any) => state.metamask);
-  const [transferTokenId, setTransferTokenId] = useState("-1");
-
+  const [transferTokenId, setTransferTokenId] = useState('-1');
 
   useEffect(() => {
     try {
@@ -61,7 +74,7 @@ const Profile = () => {
             });
         });
       });
-    } catch (e) { }
+    } catch (e) {}
   }, []);
   return (
     <Default pageName="Profile">
@@ -85,8 +98,9 @@ const Profile = () => {
                 onClick={() => {
                   setSelected(0);
                 }}
-                className={`mx-2  ${selected == 0 ? 'bg-gray-500' : 'hover:bg-gray-500'
-                  } text-white p-2 rounded-md font-semibold `}
+                className={`mx-2  ${
+                  selected == 0 ? 'bg-gray-500' : 'hover:bg-gray-500'
+                } text-white p-2 rounded-md font-semibold `}
               >
                 Devices
               </button>
@@ -111,8 +125,9 @@ const Profile = () => {
                   });
                   setSelected(1);
                 }}
-                className={`mx-2  ${selected == 1 ? 'bg-gray-500' : 'hover:bg-gray-500'
-                  } text-white p-2 rounded-md font-semibold `}
+                className={`mx-2  ${
+                  selected == 1 ? 'bg-gray-500' : 'hover:bg-gray-500'
+                } text-white p-2 rounded-md font-semibold `}
               >
                 Activity
               </button>
@@ -124,7 +139,7 @@ const Profile = () => {
               devices.map((device, index) => (
                 <div
                   key={index}
-                  className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[220px] text-black mx-2 rounded-xl hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
+                  className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[0px] text-black mx-2 rounded-xl hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
                 >
                   <Link href={'/device/' + device} key={index}>
                     <Image
@@ -163,8 +178,13 @@ const Profile = () => {
                 <div className="flex justify-center w-full">
                   <div
                     key={index}
-                    className={`flex justify-start p-3  rounded-lg ${type == 'Minted' ? 'bg-lime-600' : type == 'Received' ? 'bg-yellow-500' : 'bg-rose-700'
-                      } bg-opacity-30 mb-2 ml-6 `}
+                    className={`flex justify-start p-3 border-2 rounded-lg ${
+                      type == 'Minted'
+                        ? 'border-green-900'
+                        : type == 'Received'
+                        ? 'outline-yellow-500'
+                        : 'border-red-900'
+                    } bg-opacity-30 mb-2 ml-6 `}
                     onClick={() => {
                       window.open(`https://mumbai.polygonscan.com/tx/${transactionHash}`);
                     }}
@@ -173,7 +193,7 @@ const Profile = () => {
                       src={extractIdentifier(riotDeviceImages[Math.floor(Math.random() * riotDeviceImages.length)])}
                       alt="Image"
                       height={150}
-                      width={150}
+                      width={200}
                       className=" rounded-lg"
                     />
                     <div className="">
@@ -181,9 +201,29 @@ const Profile = () => {
                         {type}&nbsp;RioT #{tokenId}
                       </h1>
                       <div>
-                        <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">{fromAddress}</h1>
-                        <p className="text-center">⬇️</p>
-                        <h1 className="text-md font-semibold text-gray-400 pl-4 pb-2">{toAddress}</h1>
+                        <SimpleGrid columns={1} spacing={2}>
+                          <Flex my={'2'}>
+                            <Box borderWidth="1px" borderRadius="lg" p={2} w={'100%'}>
+                              <Text fontWeight="bold">
+                                <Badge colorScheme="red">From</Badge>
+                              </Text>
+                              <Text fontSize="sm">{fromAddress}</Text>
+                            </Box>
+                          </Flex>
+                          <Flex>
+                            <Center>
+                              <ArrowDownIcon boxSize={10} />
+                            </Center>
+                          </Flex>
+                          <Flex my={'2'}>
+                            <Box borderWidth="1px" borderRadius="lg" p={2} w={'100%'}>
+                              <Text fontWeight="bold">
+                                <Badge colorScheme="green">To</Badge>
+                              </Text>
+                              <Text fontSize="sm">{toAddress}</Text>
+                            </Box>
+                          </Flex>
+                        </SimpleGrid>
                       </div>
 
                       <p className="my-auto text-xs text-gray-500 text-end">{getTimeDifferenceString(timestamp)}</p>
