@@ -139,7 +139,7 @@ const Profile = () => {
               devices.map((device, index) => (
                 <div
                   key={index}
-                  className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[0px] text-black mx-2 rounded-xl hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
+                  className="flex-col bg-gray-800 bg-opacity-30 h-[240px] pt-3 w-[220px] text-black mx-2 rounded-xl hover:bg-gray-700 transition ease-in-out delay-100 duration-200 hover:scale-105"
                 >
                   <Link href={'/device/' + device} key={index}>
                     <Image
